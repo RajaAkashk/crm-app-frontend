@@ -1,0 +1,10 @@
+/* Remove default underline */
+nav a {
+  text-decoration: none;
+}
+
+/* Styling for active link */
+.active-link {
+  font-weight: bold;
+  text-decoration: underline;
+}
