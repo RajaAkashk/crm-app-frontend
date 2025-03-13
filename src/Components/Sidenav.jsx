@@ -4,14 +4,12 @@ import { NavLink } from "react-router-dom";
 function Sidenav() {
   return (
     <div className="bg-info-subtle p-3 text-center vh-100">
-      <h2 className="text-info-emphasis">Sidebar</h2>
+      <h2>Sidebar</h2>
       <nav className="d-flex flex-column">
         <NavLink
           to="/"
           className={({ isActive }) =>
-            `text-black fs-5 fw-medium text-info-emphasis ${
-              isActive ? "active-link" : ""
-            }`
+            `text-black fs-5 fw-medium mb-3  ${isActive ? "active-link" : ""}`
           }
         >
           Leads
@@ -19,9 +17,7 @@ function Sidenav() {
         <NavLink
           to="/sales"
           className={({ isActive }) =>
-            `text-black fs-5 fw-medium text-info-emphasis ${
-              isActive ? "active-link" : ""
-            }`
+            `text-black fs-5 fw-medium  mb-3 ${isActive ? "active-link" : ""}`
           }
         >
           Sales
@@ -29,9 +25,7 @@ function Sidenav() {
         <NavLink
           to="/agents"
           className={({ isActive }) =>
-            `text-black fs-5 fw-medium text-info-emphasis ${
-              isActive ? "active-link" : ""
-            }`
+            `text-black fs-5 fw-medium mb-3  ${isActive ? "active-link" : ""}`
           }
         >
           Agents
@@ -39,9 +33,7 @@ function Sidenav() {
         <NavLink
           to="/reports"
           className={({ isActive }) =>
-            `text-black fs-5 fw-medium text-info-emphasis ${
-              isActive ? "active-link" : ""
-            }`
+            `text-black fs-5 fw-medium  mb-3 ${isActive ? "active-link" : ""}`
           }
         >
           Reports
@@ -49,9 +41,7 @@ function Sidenav() {
         <NavLink
           to="/settings"
           className={({ isActive }) =>
-            `text-black fs-5 fw-medium  text-info-emphasis${
-              isActive ? "active-link" : ""
-            }`
+            `text-black fs-5 fw-medium  mb-3 ${isActive ? "active-link" : ""}`
           }
         >
           Settings
