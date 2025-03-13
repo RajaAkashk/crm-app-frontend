@@ -9,7 +9,7 @@ export const fetchLeads = createAsyncThunk("get/leads", async () => {
     if (!response) {
       console.log("Failed to get response");
     }
-    console.log(response);
+    console.log("response.data.leads:-",response.data.leads);
     return response.data;
   } catch (error) {
     console.error(error);
@@ -31,7 +31,7 @@ export const leadSlice = createSlice({
     });
     builder.addCase(fetchLeads.fulfilled, (state, action) => {
       state.status = "success";
-      console.log(action.payload);
+      console.log(action.payload.leads);
       state.leads = action.payload;
     });
     builder.addCase(fetchLeads.rejected, (state) => {
