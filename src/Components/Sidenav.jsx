@@ -23,7 +23,7 @@ function Sidenav() {
           Sales
         </NavLink>
         <NavLink
-          to="/agents"
+          to="/salesAgent"
           className={({ isActive }) =>
             `text-black fs-5 fw-medium mb-3  ${isActive ? "active-link" : ""}`
           }

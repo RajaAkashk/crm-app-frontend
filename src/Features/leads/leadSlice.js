@@ -9,7 +9,7 @@ export const fetchLeads = createAsyncThunk("get/leads", async () => {
     if (!response) {
       console.log("Failed to get response");
     }
-    console.log("response.data.leads:-",response.data.leads);
+    console.log("response.data.leads:-", response.data.leads);
     return response.data;
   } catch (error) {
     console.error(error);

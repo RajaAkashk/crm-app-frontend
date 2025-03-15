@@ -1,6 +1,6 @@
 import React from "react";
 import Sidenav from "../Components/Sidenav";
-import LeadView from "../Features/leadView";
+import LeadView from "../Features/leads/LeadView";
 
 function HomePage() {
   return (
@@ -11,7 +11,7 @@ function HomePage() {
         </h1>
         <div className="row">
           <div className="col-md-2">
-            <Sidenav /> 
+            <Sidenav />
           </div>
           <div className="col-md-10" style={{ background: "#fff" }}>
             <LeadView />

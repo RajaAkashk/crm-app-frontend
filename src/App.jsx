@@ -4,12 +4,14 @@ import "bootstrap/dist/js/bootstrap.min.js";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "./App.css";
 import HomePage from "./Pages/homePage";
+import SalesAgentPage from "./Pages/SalesAgentPage";
 
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<HomePage />}></Route>
+        <Route path="/salesAgent" element={<SalesAgentPage />}></Route>
       </Routes>
     </Router>
   );
