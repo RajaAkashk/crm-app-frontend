@@ -3,8 +3,6 @@ import { useEffect } from "react";
 import { fetchLeads } from "./leadSlice";
 
 function LeadView() {
-  const [display, setDisplay] = useState(false);
-
   const dispatch = useDispatch();
   const { leads, status, error } = useSelector((state) => state.leads);
   console.log("leads", leads.leads);
@@ -39,6 +37,10 @@ function LeadView() {
       }
       return acc;
     }, 0);
+
+  {
+    error && <p>Error Occured,{error}</p>;
+  }
 
   return (
     <div className="p-4">
@@ -121,7 +123,10 @@ function LeadView() {
           "Loading..."
         )}
 
-        <button className="btn btn-outline-info float-end">
+        <button
+          onClick={() => setDisplay(true)}
+          className="btn btn-outline-info float-end"
+        >
           <i class="bi bi-plus-square me-2"></i>Add Lead
         </button>
       </div>
