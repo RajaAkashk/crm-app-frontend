@@ -3,6 +3,8 @@ import { useEffect } from "react";
 import { fetchLeads } from "./leadSlice";
 
 function LeadView() {
+  const [display, setDisplay] = useState(false);
+
   const dispatch = useDispatch();
   const { leads, status, error } = useSelector((state) => state.leads);
   console.log("leads", leads.leads);
@@ -37,8 +39,6 @@ function LeadView() {
       }
       return acc;
     }, 0);
-
-  console.log("newLeads:-", newLeads);
 
   return (
     <div className="p-4">
