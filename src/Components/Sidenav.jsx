@@ -14,21 +14,21 @@ function Sidenav() {
         >
           Leads
         </NavLink>
-        <NavLink
+        {/* <NavLink
           to="/sales"
           className={({ isActive }) =>
             `text-black fs-5 fw-medium  mb-3 ${isActive ? "active-link" : ""}`
           }
         >
           Sales
-        </NavLink>
+        </NavLink> */}
         <NavLink
-          to="/agents"
+          to="/salesAgent"
           className={({ isActive }) =>
             `text-black fs-5 fw-medium mb-3  ${isActive ? "active-link" : ""}`
           }
         >
-          Agents
+          Sales Agents
         </NavLink>
         <NavLink
           to="/reports"

@@ -3,6 +3,8 @@ import { useEffect } from "react";
 import { fetchLeads } from "./leadSlice";
 
 function LeadView() {
+  const [display, setDisplay] = useState(false);
+
   const dispatch = useDispatch();
   const { leads, status, error } = useSelector((state) => state.leads);
   console.log("leads", leads.leads);
@@ -37,8 +39,6 @@ function LeadView() {
       }
       return acc;
     }, 0);
-
-  console.log("newLeads:-", newLeads);
 
   return (
     <div className="p-4">
@@ -107,7 +107,7 @@ function LeadView() {
               <div className="col-md-3">
                 <div className="card">
                   <div className="card-body">
-                    <span class="badge mb-2 bg-info">New</span>
+                    <span className="badge mb-2 bg-info">New</span>
                     <h5 className="card-title">{lead.name}</h5>
                     <h6 className="card-subtitle text-body-secondary">
                       Sales Agent: {lead.salesAgent.name}
