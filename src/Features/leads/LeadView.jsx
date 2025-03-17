@@ -2,6 +2,8 @@ import { useSelector, useDispatch } from "react-redux";
 import { useEffect } from "react";
 import { fetchLeads } from "./leadSlice";
 import { useState } from "react";
+import Select from "react-select";
+import { fetchTags } from "../tags/tagSlice";
 import { fetchSalesAgents } from "../salesAgents/salesAgentSlice";
 
 function LeadView() {
@@ -10,7 +12,7 @@ function LeadView() {
   const [leadSource, setLeadSource] = useState("Website");
   const [assignedAgent, setAssignedAgent] = useState("");
   const [leadStatus, setLeadStatus] = useState("New");
-  const [tags, setTags] = useState([]);
+  const [selectedTags, setTags] = useState([]);
   const [timeToClose, setTimeToClose] = useState("");
   const [priority, setPriority] = useState("Medium");
 
@@ -19,16 +21,33 @@ function LeadView() {
   console.log("leads", leads.leads);
 
   const { salesAgents } = useSelector((state) => state.salesAgents);
+  const { tags } = useSelector((state) => state.tags);
+  console.log("leadTags", tags);
 
   useEffect(() => {
     dispatch(fetchLeads());
     dispatch(fetchSalesAgents());
+    dispatch(fetchTags());
   }, [dispatch]);
+
+  const tagOptions =
+    Array.isArray(tags) &&
+    tags.map((tag) => ({
+      value: tag.name,
+      label: tag.name,
+    }));
+
+  console.log("tagOptions", tagOptions);
+
+  const handleMultiSelectChange = (selectedTag) => {
+    setTags(selectedTag);
+    console.log("selectedTag", selectedTag);
+  };
 
   const newLeads =
     Array.isArray(leads.leads) &&
     leads.leads.reduce((acc, curr) => {
-      if (curr.status == "New") {
+      if (curr.status === "New") {
         return acc + 1;
       }
       return acc;
@@ -37,7 +56,7 @@ function LeadView() {
   const contractedLeads =
     Array.isArray(leads.leads) &&
     leads.leads.reduce((acc, curr) => {
-      if (curr == "Contracted") {
+      if (curr.status === "Contracted") {
         return acc + 1;
       }
       return acc;
@@ -46,7 +65,7 @@ function LeadView() {
   const qualifiedLeads =
     Array.isArray(leads.leads) &&
     leads.leads.reduce((acc, curr) => {
-      if (curr == "Qualified") {
+      if (curr.status === "Qualified") {
         return acc + 1;
       }
       return acc;
@@ -59,7 +78,7 @@ function LeadView() {
       leadSource,
       assignedAgent,
       leadStatus,
-      tags,
+      tags: selectedTags.map((tag) => tag.value),
       timeToClose,
       priority,
     };
@@ -146,8 +165,11 @@ function LeadView() {
               </div>
             </div>
 
-            {leads.leads.map((lead) => (
-              <div className="col-md-3">
+            {leads.leads.map((lead, index) => (
+              <div
+                key={lead._id ? lead._id : `lead-${index}`}
+                className="col-md-3"
+              >
                 <div className="card">
                   <div className="card-body">
                     <span className="badge mb-2 bg-info">New</span>
@@ -212,7 +234,7 @@ function LeadView() {
                   >
                     <option value="">Select an agent</option>
                     {salesAgents.map((agent) => (
-                      <option key={agent.id} value={agent.id}>
+                      <option key={agent._id} value={agent._id}>
                         {agent.name}
                       </option>
                     ))}
@@ -234,23 +256,15 @@ function LeadView() {
                   </select>
                 </div>
 
-                {/* <div className="col-md-6 mb-3">
+                <div className="col-md-6 mb-3">
                   <label className="form-label">Tags</label>
-                  <select
-                    className="form-control"
-                    multiple
-                    onChange={(e) =>
-                      setTags(
-                        [...e.target.selectedOptions].map(
-                          (option) => option.value
-                        )
-                      )
-                    }
-                  >
-                    <option>High Value</option>
-                    <option>Follow-up</option>
-                  </select>
-                </div> */}
+                  <Select
+                    options={tagOptions}
+                    isMulti
+                    value={tags}
+                    onChange={handleMultiSelectChange}
+                  />
+                </div>
 
                 <div className="col-md-6 mb-3">
                   <label className="form-label">Time to Close (Days)</label>
