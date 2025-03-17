@@ -1,14 +1,28 @@
 import { useSelector, useDispatch } from "react-redux";
 import { useEffect } from "react";
 import { fetchLeads } from "./leadSlice";
+import { useState } from "react";
+import { fetchSalesAgents } from "../salesAgents/salesAgentSlice";
 
 function LeadView() {
+  const [display, setDisplay] = useState(false);
+  const [leadName, setLeadName] = useState("");
+  const [leadSource, setLeadSource] = useState("Website");
+  const [assignedAgent, setAssignedAgent] = useState("");
+  const [leadStatus, setLeadStatus] = useState("New");
+  const [tags, setTags] = useState([]);
+  const [timeToClose, setTimeToClose] = useState("");
+  const [priority, setPriority] = useState("Medium");
+
   const dispatch = useDispatch();
   const { leads, status, error } = useSelector((state) => state.leads);
   console.log("leads", leads.leads);
 
+  const { salesAgents } = useSelector((state) => state.salesAgents);
+
   useEffect(() => {
     dispatch(fetchLeads());
+    dispatch(fetchSalesAgents());
   }, [dispatch]);
 
   const newLeads =
@@ -37,6 +51,33 @@ function LeadView() {
       }
       return acc;
     }, 0);
+
+  const handleNewLeadSubmit = async (e) => {
+    e.preventDefault();
+    const newLead = {
+      leadName,
+      leadSource,
+      assignedAgent,
+      leadStatus,
+      tags,
+      timeToClose,
+      priority,
+    };
+
+    const resultAction = await dispatch(addNewLead(newLead));
+    if (addNewLead.fulfilled.match(resultAction)) {
+      setDisplay(false);
+      setLeadName("");
+      setLeadSource("Website");
+      setAssignedAgent("");
+      setLeadStatus("New");
+      setTags([]);
+      setTimeToClose("");
+      setPriority("Medium");
+    } else {
+      alert(resultAction.payload?.error || "Failed to add lead");
+    }
+  };
 
   {
     error && <p>Error Occured,{error}</p>;
@@ -130,6 +171,128 @@ function LeadView() {
           <i class="bi bi-plus-square me-2"></i>Add Lead
         </button>
       </div>
+
+      {display && (
+        <div className="overlay">
+          <div className="form-container">
+            <form onSubmit={handleNewLeadSubmit}>
+              <h2 className="text-center mb-4">Add New Lead</h2>
+              <div className="row">
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">Lead Name</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Enter lead name"
+                    value={leadName}
+                    required
+                    onChange={(e) => setLeadName(e.target.value)}
+                  />
+                </div>
+
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">Lead Source</label>
+                  <select
+                    className="form-control"
+                    value={leadSource}
+                    onChange={(e) => setLeadSource(e.target.value)}
+                  >
+                    <option>Website</option>
+                    <option>Referral</option>
+                    <option>Cold Call</option>
+                  </select>
+                </div>
+
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">Assigned Sales Agent</label>
+                  <select
+                    className="form-control"
+                    value={assignedAgent}
+                    onChange={(e) => setAssignedAgent(e.target.value)}
+                  >
+                    <option value="">Select an agent</option>
+                    {salesAgents.map((agent) => (
+                      <option key={agent.id} value={agent.id}>
+                        {agent.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">Lead Status</label>
+                  <select
+                    className="form-control"
+                    value={leadStatus}
+                    onChange={(e) => setLeadStatus(e.target.value)}
+                  >
+                    <option>New</option>
+                    <option>Contacted</option>
+                    <option>Qualified</option>
+                    <option>Proposal Sent</option>
+                    <option>Closed</option>
+                  </select>
+                </div>
+
+                {/* <div className="col-md-6 mb-3">
+                  <label className="form-label">Tags</label>
+                  <select
+                    className="form-control"
+                    multiple
+                    onChange={(e) =>
+                      setTags(
+                        [...e.target.selectedOptions].map(
+                          (option) => option.value
+                        )
+                      )
+                    }
+                  >
+                    <option>High Value</option>
+                    <option>Follow-up</option>
+                  </select>
+                </div> */}
+
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">Time to Close (Days)</label>
+                  <input
+                    type="number"
+                    className="form-control"
+                    value={timeToClose}
+                    required
+                    onChange={(e) => setTimeToClose(e.target.value)}
+                  />
+                </div>
+
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">Priority</label>
+                  <select
+                    className="form-control"
+                    value={priority}
+                    onChange={(e) => setPriority(e.target.value)}
+                  >
+                    <option>High</option>
+                    <option>Medium</option>
+                    <option>Low</option>
+                  </select>
+                </div>
+              </div>
+              <button
+                type="submit"
+                className="w-100 mb-2 btn btn-info text-light"
+              >
+                Submit
+              </button>
+              <button
+                type="button"
+                className="w-100 mb-2 btn btn-secondary text-light"
+                onClick={() => setDisplay(false)}
+              >
+                Cancel
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
