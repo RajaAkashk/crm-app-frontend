@@ -3,6 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import Sidenav from "../Components/Sidenav";
 import { fetchLeadById } from "../Features/leads/leadSlice";
 import { useDispatch, useSelector } from "react-redux";
+import { fetchComments } from "../Features/comments/commentSlice";
 
 function LeadDetailsPage() {
   const { id } = useParams();
@@ -11,12 +12,14 @@ function LeadDetailsPage() {
 
   const dispatch = useDispatch();
   const { leads, status, error } = useSelector((state) => state.leads);
-  const lead = useSelector((state) => state.leads.leads);
+  const comments = useSelector((state) => state.comments);
 
+  console.log("LeadDetailsPage comments- ", comments);
   console.log("LeadDetailsPage - ", leads);
 
   useEffect(() => {
     dispatch(fetchLeadById(id));
+    fetchComments(id);
   }, [dispatch, id]);
 
   return (
@@ -51,30 +54,30 @@ function LeadDetailsPage() {
               <div className="col-md-6">
                 <div className="">
                   <div className="">
-                    <h2 className="display-6 fw-medium">{lead?.name}</h2>
+                    <h2 className="display-6 fw-medium">{leads?.name}</h2>
                     <p className="fs-5">
-                      <strong>Sales Agent:</strong> {lead?.salesAgent?.name} (
-                      {lead?.salesAgent?.email})
+                      <strong>Sales Agent:</strong> {leads?.salesAgent?.name} (
+                      {leads?.salesAgent?.email})
                     </p>
                     <p className="fs-5">
-                      <strong>Source:</strong> {lead?.source}
+                      <strong>Source:</strong> {leads?.source}
                     </p>
                     <p className="fs-5">
-                      <strong>Status:</strong> {lead?.status}
+                      <strong>Status:</strong> {leads?.status}
                     </p>
                     <p className="fs-5">
-                      <strong>Priority:</strong> {lead?.priority}
+                      <strong>Priority:</strong> {leads?.priority}
                     </p>
                     <p className="fs-5">
-                      <strong>Time to Close:</strong> {lead?.timeToClose} days
+                      <strong>Time to Close:</strong> {leads?.timeToClose} days
                     </p>
                     <p className="fs-5">
                       <strong>Created At:</strong>{" "}
-                      {new Date(lead?.createdAt).toLocaleString()}
+                      {new Date(leads?.createdAt).toLocaleString()}
                     </p>
                     <p className="fs-5">
                       <strong>Tags:</strong>{" "}
-                      {lead?.tags?.map((tag) => tag.name).join(", ")}
+                      {leads?.tags?.map((tag) => tag.name).join(", ")}
                     </p>
                   </div>
                 </div>
@@ -82,7 +85,6 @@ function LeadDetailsPage() {
             )}
 
             {/* comments  */}
-            
           </div>
         </div>
       </div>

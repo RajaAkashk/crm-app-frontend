@@ -20,6 +20,26 @@ export const fetchComments = createAsyncThunk(
   }
 );
 
+export const addNewComment = createAsyncThunk(
+  "post/newComment",
+  async ({ newComment, leadId }) => {
+    try {
+      const response = await axios.post(
+        `https://backend-mp-2.vercel.app/api/comments/leads/${leadId}/comments`,
+        newComment
+      );
+
+      if (!response.data) {
+        console.log("Not able to add new comment");
+      }
+      console.log("addNewComment response.data", response.data);
+      return response.data;
+    } catch (error) {
+      console.log("Error in adding new comment", error);
+    }
+  }
+);
+
 export const commentSlice = createSlice({
   name: "comments",
   initialState: {
@@ -37,6 +57,18 @@ export const commentSlice = createSlice({
       state.comments = action.payload;
     });
     builder.addCase(fetchComments.rejected, (state, action) => {
+      state.status = "error";
+      state.error = action.error.message;
+    });
+    // add New Comment
+    builder.addCase(addNewComment.pending, (state) => {
+      state.status = "loading";
+    });
+    builder.addCase(addNewComment.fulfilled, (state, action) => {
+      state.status = "success";
+      state.comments = [...state.comments, action.payload];
+    });
+    builder.addCase(addNewComment.rejected, (state, action) => {
       state.status = "error";
       state.error = action.error.message;
     });
