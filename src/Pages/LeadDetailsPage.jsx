@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import Sidenav from "../Components/Sidenav";
 import { fetchLeadById } from "../Features/leads/leadSlice";
 import { useDispatch, useSelector } from "react-redux";
@@ -29,7 +29,16 @@ function LeadDetailsPage() {
           <div className="col-md-2">
             <Sidenav />
           </div>
-          <div className="col-md-10 py-4" style={{ background: "#fff" }}>
+          <div className="col-md-10 p-4" style={{ background: "#fff" }}>
+            <Link to="/" className="btn btn-outline-info fs-5 fw-medium mb-4">
+              Back to Dashboard
+            </Link>
+            <Link
+              to="/"
+              className="float-end btn btn-outline-info fs-5 fw-medium mb-4"
+            >
+              <i class="bi bi-pencil-fill"></i> Lead
+            </Link>
             {status === "loading" ? (
               <div className="d-flex justify-content-center align-items-center vh-100">
                 <div className="spinner-border text-info" role="status">
@@ -40,30 +49,30 @@ function LeadDetailsPage() {
               <p>{error}</p>
             ) : (
               <div className="col-md-6">
-                <div className="card">
-                  <div className="card-body">
-                    <h2 className="card-title">{lead?.name}</h2>
-                    <h6 className="card-subtitle mb-2 text-muted">
-                      Sales Agent: {lead?.salesAgent?.name} (
+                <div className="">
+                  <div className="">
+                    <h2 className="display-6 fw-medium">{lead?.name}</h2>
+                    <p className="fs-5">
+                      <strong>Sales Agent:</strong> {lead?.salesAgent?.name} (
                       {lead?.salesAgent?.email})
-                    </h6>
-                    <p>
+                    </p>
+                    <p className="fs-5">
                       <strong>Source:</strong> {lead?.source}
                     </p>
-                    <p>
+                    <p className="fs-5">
                       <strong>Status:</strong> {lead?.status}
                     </p>
-                    <p>
+                    <p className="fs-5">
                       <strong>Priority:</strong> {lead?.priority}
                     </p>
-                    <p>
+                    <p className="fs-5">
                       <strong>Time to Close:</strong> {lead?.timeToClose} days
                     </p>
-                    <p>
+                    <p className="fs-5">
                       <strong>Created At:</strong>{" "}
                       {new Date(lead?.createdAt).toLocaleString()}
                     </p>
-                    <p>
+                    <p className="fs-5">
                       <strong>Tags:</strong>{" "}
                       {lead?.tags?.map((tag) => tag.name).join(", ")}
                     </p>
@@ -71,6 +80,9 @@ function LeadDetailsPage() {
                 </div>
               </div>
             )}
+
+            {/* comments  */}
+            
           </div>
         </div>
       </div>
