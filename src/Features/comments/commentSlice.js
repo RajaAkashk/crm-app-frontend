@@ -4,13 +4,11 @@ import axios from "axios";
 export const fetchComments = createAsyncThunk(
   "get/comments",
   async (leadId) => {
+    console.log("fetchComments leadId", leadId);
     try {
-      const response = axios.get(
+      const response = await axios.get(
         `https://backend-mp-2.vercel.app/api/comments/leads/${leadId}/comments`
       );
-      if (!response.data) {
-        console.log("Not getting response from fetch comments");
-      }
       console.log("fetchComments response.data", response.data);
       return response.data.comments;
     } catch (error) {
@@ -29,9 +27,6 @@ export const addNewComment = createAsyncThunk(
         newComment
       );
 
-      if (!response.data) {
-        console.log("Not able to add new comment");
-      }
       console.log("addNewComment response.data", response.data);
       return response.data;
     } catch (error) {
@@ -54,6 +49,7 @@ export const commentSlice = createSlice({
     });
     builder.addCase(fetchComments.fulfilled, (state, action) => {
       state.status = "success";
+      console.log("fetchComments:-", action.payload);
       state.comments = action.payload;
     });
     builder.addCase(fetchComments.rejected, (state, action) => {

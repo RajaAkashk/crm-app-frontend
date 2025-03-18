@@ -8,7 +8,7 @@ export const store = configureStore({
   reducer: {
     leads: leadSlice.reducer,
     tags: tagSlice.reducer,
-    comments: commentSlice.reducer,
     salesAgents: salesAgentsSlice.reducer,
+    comments: commentSlice.reducer,
   },
 });

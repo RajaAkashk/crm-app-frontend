@@ -12,14 +12,18 @@ function LeadDetailsPage() {
 
   const dispatch = useDispatch();
   const { leads, status, error } = useSelector((state) => state.leads);
-  const comments = useSelector((state) => state.comments);
+  const {
+    comments,
+    status: commentStatus,
+    error: commentError,
+  } = useSelector((state) => state.comments);
 
   console.log("LeadDetailsPage comments- ", comments);
   console.log("LeadDetailsPage - ", leads);
 
   useEffect(() => {
     dispatch(fetchLeadById(id));
-    fetchComments(id);
+    dispatch(fetchComments(id));
   }, [dispatch, id]);
 
   return (
@@ -85,6 +89,35 @@ function LeadDetailsPage() {
             )}
 
             {/* comments  */}
+            <div className="py-4">
+              <h1>Comments</h1>
+              {commentStatus == "loading" ? (
+                "loading..."
+              ) : commentError ? (
+                <p>{commentError}</p>
+              ) : (
+                <div>
+                  <ul className="list-group">
+                    {comments.map((comment) => (
+                      <li key={comment._id} className="list-group-item">
+                        <p>{comment.commentText}</p>
+                        <p>
+                          <i class="bi bi-person-circle fs-4 me-2"></i>
+                          {comment.author?.name || "Unknown"}
+                        </p>
+                        <p>
+                          {/* <strong>Created At: </strong> */}
+                          {new Date(comment.createdAt).toLocaleString()}
+                        </p>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              <button className="btn btn-outline-info float-end my-3">
+                <i class="bi bi-plus-square me-2"></i> Add Comment
+              </button>
+            </div>
           </div>
         </div>
       </div>
