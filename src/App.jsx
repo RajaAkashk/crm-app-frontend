@@ -5,6 +5,7 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import "./App.css";
 import HomePage from "./Pages/homePage";
 import SalesAgentPage from "./Pages/SalesAgentPage";
+import LeadDetailsPage from "./Pages/LeadDetailsPage";
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage />}></Route>
         <Route path="/salesAgent" element={<SalesAgentPage />}></Route>
+        <Route path="/lead/:id" element={<LeadDetailsPage />}></Route>
       </Routes>
     </Router>
   );

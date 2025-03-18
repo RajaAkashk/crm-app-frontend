@@ -5,6 +5,7 @@ import { useState } from "react";
 import Select from "react-select";
 import { fetchTags } from "../tags/tagSlice";
 import { fetchSalesAgents } from "../salesAgents/salesAgentSlice";
+import { Link } from "react-router-dom";
 
 function LeadView() {
   const [display, setDisplay] = useState(false);
@@ -170,7 +171,11 @@ function LeadView() {
                 key={lead._id ? lead._id : `lead-${index}`}
                 className="col-md-3"
               >
-                <div className="card">
+                <Link
+                  to={`lead/${lead._id}`}
+                  className="card"
+                  style={{ textDecoration: "none" }}
+                >
                   <div className="card-body">
                     <span className="badge mb-2 bg-info">New</span>
                     <h5 className="card-title">{lead.name}</h5>
@@ -178,7 +183,7 @@ function LeadView() {
                       Sales Agent: {lead.salesAgent.name}
                     </h6>
                   </div>
-                </div>
+                </Link>
               </div>
             ))}
           </div>
