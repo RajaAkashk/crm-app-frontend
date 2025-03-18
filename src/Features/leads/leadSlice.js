@@ -17,6 +17,24 @@ export const fetchLeads = createAsyncThunk("get/leads", async () => {
   }
 });
 
+// fetch lead by id
+export const fetchLeadById = createAsyncThunk("get/lead", async (leadId) => {
+  try {
+    const response = await axios.get(
+      `https://backend-mp-2.vercel.app/api/leads/${leadId}`
+    );
+
+    if (!response.data) {
+      console.log("failed to get response from fetch Lead By Id");
+    }
+    console.log("response.data.lead", response.data.lead);
+    return response.data.lead;
+  } catch (error) {
+    console.error(error);
+    return error.response?.data?.message || "Failed to fetch projects";
+  }
+});
+
 export const leadSlice = createSlice({
   name: "leads",
   initialState: {
@@ -35,6 +53,18 @@ export const leadSlice = createSlice({
       state.leads = action.payload;
     });
     builder.addCase(fetchLeads.rejected, (state) => {
+      state.status = "error";
+      state.error = action.errro.message;
+    });
+    // fetchLeadById
+    builder.addCase(fetchLeadById.pending, (state) => {
+      state.status = "loading";
+    });
+    builder.addCase(fetchLeadById.fulfilled, (state, action) => {
+      state.status = "success";
+      state.leads = action.payload;
+    });
+    builder.addCase(fetchLeadById.rejected, (state) => {
       state.status = "error";
       state.error = action.errro.message;
     });
