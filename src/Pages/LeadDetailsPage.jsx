@@ -3,12 +3,19 @@ import { useParams, Link } from "react-router-dom";
 import Sidenav from "../Components/Sidenav";
 import { fetchLeadById } from "../Features/leads/leadSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchComments } from "../Features/comments/commentSlice";
+import {
+  fetchComments,
+  addNewComment,
+} from "../Features/comments/commentSlice";
+import { useState } from "react";
 
 function LeadDetailsPage() {
   const { id } = useParams();
 
   console.log("leadId: ", id);
+
+  const [display, setDisplay] = useState(false);
+  const [comment, setComment] = useState("");
 
   const dispatch = useDispatch();
   const { leads, status, error } = useSelector((state) => state.leads);
@@ -26,6 +33,24 @@ function LeadDetailsPage() {
     dispatch(fetchComments(id));
   }, [dispatch, id]);
 
+  const AddNewSalesAgent = async (e) => {
+    e.preventDefault();
+    const newComment = {
+      lead: id,
+      author: "",
+      comment: comment,
+    };
+    const resultAction = await dispatch(addNewComment(newComment));
+    console.log("resultAction: ", resultAction);
+
+    if (resultAction) {
+      setDisplay(false);
+      setComment("");
+    } else {
+      alert(resultAction.payload?.error || "Failed to add comment");
+    }
+  };
+
   return (
     <div className="" style={{ background: "#cff4fc" }}>
       <div className="container-fluid">
@@ -41,7 +66,7 @@ function LeadDetailsPage() {
               Back to Dashboard
             </Link>
             <Link
-              to="/"
+              to={`/edit/lead/${id}`}
               className="float-end btn btn-outline-info fs-5 fw-medium mb-4"
             >
               <i class="bi bi-pencil-fill"></i> Lead
@@ -114,10 +139,55 @@ function LeadDetailsPage() {
                   </ul>
                 </div>
               )}
-              <button className="btn btn-outline-info float-end my-3">
+              <button
+                onClick={() => setDisplay(true)}
+                className="btn btn-outline-info float-end my-3"
+              >
                 <i class="bi bi-plus-square me-2"></i> Add Comment
               </button>
             </div>
+
+            {display && (
+              <div className="overlay">
+                <div className="form-container">
+                  <form onSubmit={AddNewSalesAgent}>
+                    <div className="mb-3">
+                      <label htmlFor="comment" className="form-label">
+                        Add a Comment
+                      </label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        id="comment"
+                        placeholder=""
+                        value={comment}
+                        required
+                        onChange={(e) => setComment(e.target.value)}
+                      />
+                    </div>
+
+                    <div className="d-flex justify-content-between">
+                      <button
+                        type="submit"
+                        className="col-md-5 mb-2 btn btn-info text-light"
+                      >
+                        Submit
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setDisplay(false);
+                          setComment("");
+                        }}
+                        className="col-md-5 mb-2 btn btn-secondary text-light"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
