@@ -35,6 +35,22 @@ export const fetchLeadById = createAsyncThunk("get/lead", async (leadId) => {
   }
 });
 
+export const updateLead = createAsyncThunk(
+  "put/lead",
+  async ({ leadId, updatedData }) => {
+    try {
+      const response = await axios.put(
+        `https://backend-mp-2.vercel.app/api/leads/${leadId}`,
+        updatedData
+      );
+      return response.data.updatedLead;
+    } catch (error) {
+      console.error(error);
+      return error.response?.data?.message || "Failed to update lead";
+    }
+  }
+);
+
 export const leadSlice = createSlice({
   name: "leads",
   initialState: {
@@ -67,6 +83,20 @@ export const leadSlice = createSlice({
     builder.addCase(fetchLeadById.rejected, (state) => {
       state.status = "error";
       state.error = action.errro.message;
+    });
+    // Update Lead
+    builder.addCase(updateLead.pending, (state) => {
+      state.status = "loading";
+    });
+    builder.addCase(updateLead.fulfilled, (state, action) => {
+      state.status = "success";
+      state.leads = state.leads.map((lead) =>
+        lead._id === action.payload._id ? action.payload : lead
+      );
+    });
+    builder.addCase(updateLead.rejected, (state, action) => {
+      state.status = "error";
+      state.error = action.error.message;
     });
   },
 });
