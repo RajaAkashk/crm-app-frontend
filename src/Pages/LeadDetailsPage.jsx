@@ -12,7 +12,7 @@ import { useState } from "react";
 function LeadDetailsPage() {
   const { id } = useParams();
 
-  console.log("leadId: ", id);
+
 
   const [display, setDisplay] = useState(false);
   const [comment, setComment] = useState("");
@@ -25,8 +25,8 @@ function LeadDetailsPage() {
     error: commentError,
   } = useSelector((state) => state.comments);
 
-  console.log("LeadDetailsPage comments- ", comments);
-  console.log("LeadDetailsPage - ", leads);
+  // console.log("LeadDetailsPage comments- ", comments);
+  // console.log("LeadDetailsPage - ", leads);
 
   useEffect(() => {
     dispatch(fetchLeadById(id));
