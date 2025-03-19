@@ -1,8 +1,11 @@
 import React, { useEffect } from "react";
 import Sidenav from "../Components/Sidenav";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchLeads } from "../Features/leads/leadSlice";
-import { fetchSalesAgents } from "../Features/salesAgents/salesAgentSlice";
+import { fetchLeads, deleteLead } from "../Features/leads/leadSlice";
+import {
+  fetchSalesAgents,
+  deleteSalesAgent,
+} from "../Features/salesAgents/salesAgentSlice";
 import { Link } from "react-router-dom";
 
 function SettingPage() {
@@ -21,6 +24,14 @@ function SettingPage() {
   } = useSelector((state) => state.salesAgents);
   console.log("SettingPage leads", leads);
   console.log("SettingPage salesAgent", salesAgents);
+
+  const handleDeleteLead = (id) => {
+    dispatch(deleteLead(id));
+  };
+
+  const handleDeleteSalesAgent = (id) => {
+    dispatch(deleteSalesAgent(id));
+  };
 
   return (
     <div className="" style={{ background: "#cff4fc" }}>
@@ -67,7 +78,10 @@ function SettingPage() {
                             <button className="btn btn-outline-info">
                               <i class="bi bi-pencil-square"></i>
                             </button>
-                            <button className="btn btn-outline-info">
+                            <button
+                              onClick={() => handleDeleteLead(lead._id)}
+                              className="btn btn-outline-info"
+                            >
                               <i class="bi bi-trash3"></i>
                             </button>
                           </div>
@@ -97,10 +111,12 @@ function SettingPage() {
                               </h6>
                             </div>
                             <div className="">
-                              {/* <button className="btn btn-outline-info">
-                                <i class="bi bi-pencil-square"></i>
-                              </button> */}
-                              <button className="btn btn-outline-info">
+                              <button
+                                onClick={() =>
+                                  handleDeleteSalesAgent(salesAgent._id)
+                                }
+                                className="btn btn-outline-info"
+                              >
                                 <i class="bi bi-trash3"></i>
                               </button>
                             </div>
