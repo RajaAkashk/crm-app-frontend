@@ -177,7 +177,7 @@ function LeadView() {
                   style={{ textDecoration: "none" }}
                 >
                   <div className="card-body">
-                    <span className="badge mb-2 bg-info">New</span>
+                    <span className="badge mb-2 bg-info"> {lead.status}</span>
                     <h5 className="card-title">{lead.name}</h5>
                     <h6 className="card-subtitle text-body-secondary">
                       Sales Agent: {lead.salesAgent.name}
