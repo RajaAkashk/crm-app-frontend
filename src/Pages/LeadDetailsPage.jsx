@@ -12,8 +12,6 @@ import { useState } from "react";
 function LeadDetailsPage() {
   const { id } = useParams();
 
-
-
   const [display, setDisplay] = useState(false);
   const [comment, setComment] = useState("");
 

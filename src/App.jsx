@@ -7,6 +7,7 @@ import HomePage from "./Pages/HomePage";
 import SalesAgentPage from "./Pages/SalesAgentPage";
 import LeadDetailsPage from "./Pages/LeadDetailsPage";
 import EditLeadPage from "./Pages/EditLeadPage";
+import SettingPage from "./Pages/SettingPage";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/salesAgent" element={<SalesAgentPage />}></Route>
         <Route path="/lead/:id" element={<LeadDetailsPage />}></Route>
         <Route path="/edit/lead/:id" element={<EditLeadPage />}></Route>
+        <Route path="/settings" element={<SettingPage />}></Route>
       </Routes>
     </Router>
   );

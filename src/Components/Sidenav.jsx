@@ -5,6 +5,7 @@ function Sidenav() {
   return (
     <div className="bg-info-subtle p-3 text-center vh-100">
       <h2>Sidebar</h2>
+
       <nav className="d-flex flex-column">
         <NavLink
           to="/"
