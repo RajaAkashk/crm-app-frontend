@@ -40,6 +40,30 @@ export const addNewAgent = createAsyncThunk(
   }
 );
 
+// delete sales agent by id
+export const deleteSalesAgent = createAsyncThunk(
+  "delete/salesAgent",
+  async (agentId) => {
+    try {
+      const response = await axios.delete(
+        `https://backend-mp-2.vercel.app/api/salesAgents/${agentId}`
+      );
+
+      if (!response.data) {
+        console.log("Failed to delete sales agent");
+      }
+      console.log(
+        "Sales agent deleted successfully",
+        response.data.deletedSalesAgent
+      );
+      return response.data.deletedSalesAgent;
+    } catch (error) {
+      console.error("Error in deleting sales agent", error);
+      return error.response?.data?.message || "Failed to delete sales agent";
+    }
+  }
+);
+
 export const salesAgentsSlice = createSlice({
   name: "salesAgent",
   initialState: {
@@ -72,6 +96,20 @@ export const salesAgentsSlice = createSlice({
     });
     builder.addCase(addNewAgent.rejected, (state, action) => {
       state.status = "Error";
+      state.error = action.error.message;
+    });
+    // delete sales agent
+    builder.addCase(deleteSalesAgent.pending, (state) => {
+      state.status = "loading";
+    });
+    builder.addCase(deleteSalesAgent.fulfilled, (state, action) => {
+      state.status = "success";
+      state.salesAgents = state.salesAgents.filter(
+        (salesAgent) => salesAgent._id !== action.payload._id
+      );
+    });
+    builder.addCase(deleteSalesAgent.rejected, (state, action) => {
+      state.status = "error";
       state.error = action.error.message;
     });
   },

@@ -51,6 +51,24 @@ export const updateLead = createAsyncThunk(
   }
 );
 
+// delete lead by id
+export const deleteLead = createAsyncThunk("delete/lead", async (leadId) => {
+  try {
+    const response = await axios.delete(
+      `https://backend-mp-2.vercel.app/api/leads/${leadId}`
+    );
+
+    if (!response.data) {
+      console.log("Failed to delete lead");
+    }
+    console.log("Lead deleted successfully", response.data.deletedLead);
+    return response.data.deletedLead;
+  } catch (error) {
+    console.error(error);
+    return error.response?.data?.message || "Failed to delete lead";
+  }
+});
+
 export const leadSlice = createSlice({
   name: "leads",
   initialState: {
@@ -95,6 +113,20 @@ export const leadSlice = createSlice({
       );
     });
     builder.addCase(updateLead.rejected, (state, action) => {
+      state.status = "error";
+      state.error = action.error.message;
+    });
+    // deleteLead
+    builder.addCase(deleteLead.pending, (state) => {
+      state.status = "loading";
+    });
+    builder.addCase(deleteLead.fulfilled, (state, action) => {
+      state.status = "success";
+      state.leads = state.leads.filter(
+        (lead) => lead._id !== action.payload._id
+      );
+    });
+    builder.addCase(deleteLead.rejected, (state, action) => {
       state.status = "error";
       state.error = action.error.message;
     });
