@@ -69,6 +69,19 @@ export const deleteLead = createAsyncThunk("delete/lead", async (leadId) => {
   }
 });
 
+export const addNewLead = createAsyncThunk("post/newLead", async (newLead) => {
+  try {
+    const response = await axios.post(
+      "https://backend-mp-2.vercel.app/api/leads",
+      newLead
+    );
+    console.log("addNewLead :-", response.data.savedLead);
+    return response.data.savedLead;
+  } catch (error) {
+    return error.response?.data?.message || "Failed to Add lead";
+  }
+});
+
 export const leadSlice = createSlice({
   name: "leads",
   initialState: {
@@ -116,17 +129,33 @@ export const leadSlice = createSlice({
       state.status = "error";
       state.error = action.error.message;
     });
-    // deleteLead
+    // delete Lead
     builder.addCase(deleteLead.pending, (state) => {
       state.status = "loading";
     });
     builder.addCase(deleteLead.fulfilled, (state, action) => {
       state.status = "success";
+      console.log("deleteLead action.payload", action.payload);
       state.leads = state.leads.filter(
         (lead) => lead._id !== action.payload._id
       );
     });
     builder.addCase(deleteLead.rejected, (state, action) => {
+      state.status = "error";
+      state.error = action.error.message;
+    });
+    // add New Lead
+    builder.addCase(addNewLead.pending, (state) => {
+      state.status = "loading";
+    });
+    builder.addCase(addNewLead.fulfilled, (state, action) => {
+      state.status = "success";
+      console.log("addNewLead action.payload: ", action.payload);
+      state.leads = Array.isArray(state.leads)
+        ? [...state.leads, action.payload]
+        : [action.payload];
+    });
+    builder.addCase(addNewLead.rejected, (state, action) => {
       state.status = "error";
       state.error = action.error.message;
     });

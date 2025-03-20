@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from "react-redux";
 import { useEffect } from "react";
-import { fetchLeads } from "./leadSlice";
+import { fetchLeads, addNewLead } from "./leadSlice";
 import { useState } from "react";
 import Select from "react-select";
 import { fetchTags } from "../tags/tagSlice";
@@ -19,7 +19,8 @@ function LeadView() {
 
   const dispatch = useDispatch();
   const { leads, status, error } = useSelector((state) => state.leads);
-  console.log("leads", leads.leads);
+  console.log("leads", leads);
+  console.log("leads", Array.isArray(leads.leads));
 
   const { salesAgents } = useSelector((state) => state.salesAgents);
   const { tags } = useSelector((state) => state.tags);
@@ -34,7 +35,7 @@ function LeadView() {
   const tagOptions =
     Array.isArray(tags) &&
     tags.map((tag) => ({
-      value: tag.name,
+      value: tag._id,
       label: tag.name,
     }));
 
@@ -75,14 +76,15 @@ function LeadView() {
   const handleNewLeadSubmit = async (e) => {
     e.preventDefault();
     const newLead = {
-      leadName,
-      leadSource,
-      assignedAgent,
-      leadStatus,
+      name: leadName,
+      priority: priority,
+      salesAgent: assignedAgent,
+      source: leadSource,
+      status: leadStatus,
       tags: selectedTags.map((tag) => tag.value),
-      timeToClose,
-      priority,
+      timeToClose: timeToClose,
     };
+    console.log("newLead", newLead);
 
     const resultAction = await dispatch(addNewLead(newLead));
     if (addNewLead.fulfilled.match(resultAction)) {
@@ -102,6 +104,17 @@ function LeadView() {
   {
     error && <p>Error Occured,{error}</p>;
   }
+
+  const handleCancel = () => {
+    setDisplay(false);
+    setLeadName("");
+    setLeadSource("");
+    setAssignedAgent("");
+    setLeadStatus("");
+    setTags([]);
+    setTimeToClose("");
+    setPriority("");
+  };
 
   return (
     <div className="p-4">
@@ -149,7 +162,7 @@ function LeadView() {
           </div>
         ) : null}
 
-        {Array.isArray(leads.leads) && leads.leads.length > 0 ? (
+        {Array.isArray(leads.leads) && leads?.leads?.length > 0 ? (
           <div>
             <div className="pb-3 d-flex flex-wrap justify-content-between">
               <div>
@@ -165,27 +178,32 @@ function LeadView() {
                 </button>
               </div>
             </div>
-
-            {leads.leads.map((lead, index) => (
-              <div
-                key={lead._id ? lead._id : `lead-${index}`}
-                className="col-md-3"
-              >
-                <Link
-                  to={`lead/${lead._id}`}
-                  className="card"
-                  style={{ textDecoration: "none" }}
-                >
-                  <div className="card-body">
-                    <span className="badge mb-2 bg-info"> {lead.status}</span>
-                    <h5 className="card-title">{lead.name}</h5>
-                    <h6 className="card-subtitle text-body-secondary">
-                      Sales Agent: {lead.salesAgent.name}
-                    </h6>
+            <div className="row">
+              {Array.isArray(leads.leads) &&
+                leads?.leads?.map((lead, index) => (
+                  <div
+                    key={lead._id ? lead._id : `lead-${index}`}
+                    className="col-md-3"
+                  >
+                    <Link
+                      to={`lead/${lead._id}`}
+                      className="card"
+                      style={{ textDecoration: "none" }}
+                    >
+                      <div className="card-body">
+                        <span className="badge mb-2 bg-info">
+                          {" "}
+                          {lead.status}
+                        </span>
+                        <h5 className="card-title">{lead.name}</h5>
+                        <h6 className="card-subtitle text-body-secondary">
+                          Sales Agent: {lead.salesAgent.name}
+                        </h6>
+                      </div>
+                    </Link>
                   </div>
-                </Link>
-              </div>
-            ))}
+                ))}
+            </div>
           </div>
         ) : (
           "Loading..."
@@ -254,7 +272,7 @@ function LeadView() {
                     onChange={(e) => setLeadStatus(e.target.value)}
                   >
                     <option>New</option>
-                    <option>Contacted</option>
+                    <option>Contracted</option>
                     <option>Qualified</option>
                     <option>Proposal Sent</option>
                     <option>Closed</option>
@@ -265,9 +283,9 @@ function LeadView() {
                   <label className="form-label">Tags</label>
                   <Select
                     options={tagOptions}
-                    isMulti
-                    value={tags}
+                    value={selectedTags}
                     onChange={handleMultiSelectChange}
+                    isMulti
                   />
                 </div>
 
@@ -289,9 +307,9 @@ function LeadView() {
                     value={priority}
                     onChange={(e) => setPriority(e.target.value)}
                   >
-                    <option>High</option>
-                    <option>Medium</option>
-                    <option>Low</option>
+                    <option value={"High"}>High</option>
+                    <option value={"Medium"}>Medium</option>
+                    <option value={"Low"}>Low</option>
                   </select>
                 </div>
               </div>
@@ -304,7 +322,7 @@ function LeadView() {
               <button
                 type="button"
                 className="w-100 mb-2 btn btn-secondary text-light"
-                onClick={() => setDisplay(false)}
+                onClick={handleCancel}
               >
                 Cancel
               </button>
