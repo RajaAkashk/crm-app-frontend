@@ -16,9 +16,6 @@ const SalesAgentView = () => {
     dispatch(fetchSalesAgents());
   }, [dispatch]);
 
-  if (status === "loading") return <p>Loading...</p>;
-  if (status === "error") return <p>Error: {error}</p>;
-
   const AddNewSalesAgent = async (e) => {
     e.preventDefault();
     const newAgent = {
@@ -27,7 +24,7 @@ const SalesAgentView = () => {
     };
     const resultAction = await dispatch(addNewAgent(newAgent));
     console.log("resultAction: ", resultAction);
-    
+
     if (addNewAgent.fulfilled.match(resultAction)) {
       setDisplay(false);
       setName("");
@@ -40,25 +37,35 @@ const SalesAgentView = () => {
   return (
     <div className="p-4">
       {/* Sales Agent List */}
-      <div className="d-flex flex-wrap">
-        {Array.isArray(salesAgents) &&
-          salesAgents.map((agent) => (
-            <div key={agent._id} className="col-md-3 p-2">
-              <div className="card">
-                <div className="card-body">
-                  <p className="card-title">
-                    <strong>Name: </strong>
-                    {agent.name}
-                  </p>
-                  <p className="card-title">
-                    <strong>Email: </strong>
-                    {agent.email}
-                  </p>
+      {status === "loading" ? (
+        <div className="d-flex justify-content-center align-items-center vh-100">
+          <div className="spinner-border text-info" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+        </div>
+      ) : error ? (
+        <p>{error}</p>
+      ) : (
+        <div className="d-flex flex-wrap">
+          {Array.isArray(salesAgents) &&
+            salesAgents.map((agent) => (
+              <div key={agent._id} className="col-md-3 p-2">
+                <div className="card">
+                  <div className="card-body">
+                    <p className="card-title">
+                      <strong>Name: </strong>
+                      {agent.name}
+                    </p>
+                    <p className="card-title">
+                      <strong>Email: </strong>
+                      {agent.email}
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-      </div>
+            ))}
+        </div>
+      )}
 
       <button
         onClick={() => setDisplay(true)}

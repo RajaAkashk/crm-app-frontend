@@ -54,41 +54,45 @@ function SettingPage() {
               <div className="p-4">
                 <div>
                   <h2 className="mb-3">Leads</h2>
-                  {leads?.leads?.map((lead, index) => (
-                    <div
-                      key={lead._id ? lead._id : `lead-${index}`}
-                      className="col-md-3"
-                    >
-                      <Link
-                        to={`lead/${lead._id}`}
-                        className="card"
-                        style={{ textDecoration: "none" }}
+                  {Array.isArray(leads.leads) &&
+                    leads?.leads?.map((lead, index) => (
+                      <div
+                        key={lead._id ? lead._id : `lead-${index}`}
+                        className="col-md-3"
                       >
-                        <div className="card-body">
-                          <span className="badge mb-2 bg-info">
-                            {lead.status}
-                          </span>
-                          <div>
-                            <h5 className="card-title">{lead.name}</h5>
-                            <h6 className="card-subtitle text-body-secondary">
-                              Sales Agent: {lead.salesAgent.name}
-                            </h6>
+                        <Link
+                          to={`lead/${lead._id}`}
+                          className="card"
+                          style={{ textDecoration: "none" }}
+                        >
+                          <div className="card-body">
+                            <span className="badge mb-2 bg-info">
+                              {lead.status}
+                            </span>
+                            <div>
+                              <h5 className="card-title">{lead.name}</h5>
+                              <h6 className="card-subtitle text-body-secondary">
+                                Sales Agent: {lead.salesAgent.name}
+                              </h6>
+                            </div>
+                            <div className="mt-4 d-flex justify-content-between">
+                              <Link
+                                to={`/lead/${lead._id}`}
+                                className="btn btn-outline-info"
+                              >
+                                <i class="bi bi-pencil-square"></i>
+                              </Link>
+                              <button
+                                onClick={() => handleDeleteLead(lead._id)}
+                                className="btn btn-outline-info"
+                              >
+                                <i class="bi bi-trash3"></i>
+                              </button>
+                            </div>
                           </div>
-                          <div className="mt-4 d-flex justify-content-between">
-                            <button className="btn btn-outline-info">
-                              <i class="bi bi-pencil-square"></i>
-                            </button>
-                            <button
-                              onClick={() => handleDeleteLead(lead._id)}
-                              className="btn btn-outline-info"
-                            >
-                              <i class="bi bi-trash3"></i>
-                            </button>
-                          </div>
-                        </div>
-                      </Link>
-                    </div>
-                  ))}
+                        </Link>
+                      </div>
+                    ))}
                 </div>
                 <div className="py-4">
                   <h2 className="mb-3">Sales Agents</h2>
