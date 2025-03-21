@@ -20,17 +20,15 @@ function LeadView() {
 
   const dispatch = useDispatch();
   const { leads, status, error } = useSelector((state) => state.leads);
-  console.log("leads", leads);
-  console.log("leads", Array.isArray(leads));
 
   const { salesAgents } = useSelector((state) => state.salesAgents);
   const { tags } = useSelector((state) => state.tags);
-  console.log("leadTags", tags);
 
   // for the initial fetching
   const [searchParams, setSearchParams] = useSearchParams();
   const leadSearchStatus = searchParams.get("status") || "";
   const salesAgent = searchParams.get("salesAgent") || "";
+
   useEffect(() => {
     dispatch(fetchLeads({ salesAgent, status: leadSearchStatus }));
     dispatch(fetchSalesAgents());
@@ -193,19 +191,30 @@ function LeadView() {
           <div>
             <h2>Leads</h2>
           </div>
-          <div>
-            <select
-              value={leadSearchStatus}
-              onChange={(e) => handleFilterChnage(e.target.value)}
-              className="border-info-subtle rounded text-info p-1"
-            >
-              <option value="">All Leads</option>
-              <option value="New">New</option>
-              <option value="Contracted">Contracted</option>
-              <option value="Qualified">Qualified</option>
-              <option value="Proposal Sent">Proposal Sent</option>
-              <option value="Closed">Closed</option>
-            </select>
+          <div className="d-flex">
+            <div className="me-2">
+              <select
+                value={leadSearchStatus}
+                onChange={(e) => handleFilterChnage(e.target.value)}
+                className="border-info-subtle rounded text-info p-1"
+              >
+                <option value="">All Sales Agents</option>
+              </select>
+            </div>
+            <div>
+              <select
+                value={leadSearchStatus}
+                onChange={(e) => handleFilterChnage(e.target.value)}
+                className="border-info-subtle rounded text-info p-1"
+              >
+                <option value="">All Leads</option>
+                <option value="New">New</option>
+                <option value="Contracted">Contracted</option>
+                <option value="Qualified">Qualified</option>
+                <option value="Proposal Sent">Proposal Sent</option>
+                <option value="Closed">Closed</option>
+              </select>
+            </div>
           </div>
         </div>
 
