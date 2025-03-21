@@ -1,21 +1,41 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
-export const fetchLeads = createAsyncThunk("get/leads", async () => {
-  try {
-    const response = await axios.get(
-      "https://backend-mp-2.vercel.app/api/leads"
-    );
-    if (!response) {
-      console.log("Failed to get response");
+// export const fetchLeads = createAsyncThunk("get/leads", async () => {
+//   try {
+//     const response = await axios.get(
+//       "https://backend-mp-2.vercel.app/api/leads"
+//     );
+//     if (!response) {
+//       console.log("Failed to get response");
+//     }
+//     console.log("response.data.leads:-", response.data.leads);
+//     return response.data;
+//   } catch (error) {
+//     console.error(error);
+//     return error.response?.data?.message || "Failed to fetch projects";
+//   }
+// });
+
+export const fetchLeads = createAsyncThunk(
+  "get/leads",
+  async ({ salesAgent = "", status = "" }) => {
+    try {
+      let url = "https://backend-mp-2.vercel.app/api/leads";
+      const queryParams = [];
+      if (salesAgent) queryParams.push(`salesAgent=${salesAgent}`);
+      if (status) queryParams.push(`status=${status}`);
+      if (queryParams.length) url += `?${queryParams.join("&")}`;
+
+      const response = await axios.get(url);
+      console.log("Fetched Leads response.data:", response.data.leads);
+      return response.data.leads;
+    } catch (error) {
+      console.error(error);
+      return error.response?.data?.message || "Failed to fetch projects";
     }
-    console.log("response.data.leads:-", response.data.leads);
-    return response.data;
-  } catch (error) {
-    console.error(error);
-    return error.response?.data?.message || "Failed to fetch projects";
   }
-});
+);
 
 // fetch lead by id
 export const fetchLeadById = createAsyncThunk("get/lead", async (leadId) => {
@@ -96,12 +116,12 @@ export const leadSlice = createSlice({
     });
     builder.addCase(fetchLeads.fulfilled, (state, action) => {
       state.status = "success";
-      console.log(action.payload.leads);
+      console.log("fetchLeads action.payload", action.payload);
       state.leads = action.payload;
     });
     builder.addCase(fetchLeads.rejected, (state) => {
       state.status = "error";
-      state.error = action.errro.message;
+      state.error = action.error.message;
     });
     // fetchLeadById
     builder.addCase(fetchLeadById.pending, (state) => {
@@ -113,7 +133,7 @@ export const leadSlice = createSlice({
     });
     builder.addCase(fetchLeadById.rejected, (state) => {
       state.status = "error";
-      state.error = action.errro.message;
+      state.error = action.error.message;
     });
     // Update Lead
     builder.addCase(updateLead.pending, (state) => {
@@ -136,9 +156,12 @@ export const leadSlice = createSlice({
     builder.addCase(deleteLead.fulfilled, (state, action) => {
       state.status = "success";
       console.log("deleteLead action.payload", action.payload);
-      state.leads = state.leads.filter(
-        (lead) => lead._id !== action.payload._id
-      );
+      console.log("deleteLead state.leads", state.leads);
+      if (state.leads.length > 0) {
+        state.leads = state.leads.filter(
+          (lead) => lead._id !== action.payload._id
+        );
+      }
     });
     builder.addCase(deleteLead.rejected, (state, action) => {
       state.status = "error";

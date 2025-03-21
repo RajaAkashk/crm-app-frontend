@@ -6,6 +6,7 @@ import Select from "react-select";
 import { fetchTags } from "../tags/tagSlice";
 import { fetchSalesAgents } from "../salesAgents/salesAgentSlice";
 import { Link } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 
 function LeadView() {
   const [display, setDisplay] = useState(false);
@@ -20,17 +21,21 @@ function LeadView() {
   const dispatch = useDispatch();
   const { leads, status, error } = useSelector((state) => state.leads);
   console.log("leads", leads);
-  console.log("leads", Array.isArray(leads.leads));
+  console.log("leads", Array.isArray(leads));
 
   const { salesAgents } = useSelector((state) => state.salesAgents);
   const { tags } = useSelector((state) => state.tags);
   console.log("leadTags", tags);
 
+  const [searchParams] = useSearchParams();
   useEffect(() => {
-    dispatch(fetchLeads());
+    const salesAgent = searchParams.get("salesAgent");
+    const status = searchParams.get("status");
+
+    dispatch(fetchLeads({ salesAgent, status }));
     dispatch(fetchSalesAgents());
     dispatch(fetchTags());
-  }, [dispatch]);
+  }, [dispatch, searchParams]);
 
   const tagOptions =
     Array.isArray(tags) &&
@@ -47,8 +52,8 @@ function LeadView() {
   };
 
   const newLeads =
-    Array.isArray(leads.leads) &&
-    leads.leads.reduce((acc, curr) => {
+    Array.isArray(leads) &&
+    leads.reduce((acc, curr) => {
       if (curr.status === "New") {
         return acc + 1;
       }
@@ -56,8 +61,8 @@ function LeadView() {
     }, 0);
 
   const contractedLeads =
-    Array.isArray(leads.leads) &&
-    leads.leads.reduce((acc, curr) => {
+    Array.isArray(leads) &&
+    leads.reduce((acc, curr) => {
       if (curr.status === "Contracted") {
         return acc + 1;
       }
@@ -65,8 +70,8 @@ function LeadView() {
     }, 0);
 
   const qualifiedLeads =
-    Array.isArray(leads.leads) &&
-    leads.leads.reduce((acc, curr) => {
+    Array.isArray(leads) &&
+    leads.reduce((acc, curr) => {
       if (curr.status === "Qualified") {
         return acc + 1;
       }
@@ -101,10 +106,6 @@ function LeadView() {
     }
   };
 
-  {
-    error && <p>Error Occured,{error}</p>;
-  }
-
   const handleCancel = () => {
     setDisplay(false);
     setLeadName("");
@@ -119,7 +120,7 @@ function LeadView() {
   return (
     <div className="p-4">
       <div className="py-4">
-        {Array.isArray(leads.leads) && leads.leads.length > 0 ? (
+        {Array.isArray(leads) && leads.length > 0 ? (
           <>
             {" "}
             <h2 className="mb-3">Lead Status</h2>
@@ -161,8 +162,9 @@ function LeadView() {
             </div>
           </div>
         ) : null}
+        {error && <p>Error Occured,{error}</p>}
 
-        {Array.isArray(leads.leads) && leads?.leads?.length > 0 ? (
+        {Array.isArray(leads) && leads?.length > 0 ? (
           <div>
             <div className="pb-3 d-flex flex-wrap justify-content-between">
               <div>
@@ -171,7 +173,7 @@ function LeadView() {
               <div>
                 <button className="btn btn-outline-info ms-2">New Lead</button>
                 <button className="btn btn-outline-info ms-2">
-                  Comtracted Lead
+                  Contracted Lead
                 </button>
                 <button className="btn btn-outline-info ms-2">
                   Qualfied Lead
@@ -179,15 +181,15 @@ function LeadView() {
               </div>
             </div>
             <div className="row">
-              {Array.isArray(leads.leads) &&
-                leads?.leads?.map((lead, index) => (
+              {Array.isArray(leads) &&
+                leads?.map((lead, index) => (
                   <div
                     key={lead._id ? lead._id : `lead-${index}`}
                     className="col-md-3"
                   >
                     <Link
                       to={`lead/${lead._id}`}
-                      className="card"
+                      className="card mb-3"
                       style={{ textDecoration: "none" }}
                     >
                       <div className="card-body">
@@ -211,7 +213,7 @@ function LeadView() {
 
         <button
           onClick={() => setDisplay(true)}
-          className="btn btn-outline-info float-end"
+          className="my-4 btn btn-outline-info float-end"
         >
           <i class="bi bi-plus-square me-2"></i>Add Lead
         </button>
