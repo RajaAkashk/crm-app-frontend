@@ -27,15 +27,26 @@ function LeadView() {
   const { tags } = useSelector((state) => state.tags);
   console.log("leadTags", tags);
 
-  const [searchParams] = useSearchParams();
+  // for the initial fetching
+  const [searchParams, setSearchParams] = useSearchParams();
+  const leadSearchStatus = searchParams.get("status") || "";
+  const salesAgent = searchParams.get("salesAgent") || "";
   useEffect(() => {
-    const salesAgent = searchParams.get("salesAgent");
-    const status = searchParams.get("status");
-
-    dispatch(fetchLeads({ salesAgent, status }));
+    dispatch(fetchLeads({ salesAgent, status: leadSearchStatus }));
     dispatch(fetchSalesAgents());
     dispatch(fetchTags());
-  }, [dispatch, searchParams]);
+  }, [dispatch, salesAgent, leadSearchStatus]);
+
+  // for the status based filtering
+  const handleFilterChnage = (value) => {
+    const updatedParams = new URLSearchParams(searchParams);
+    if (value) {
+      updatedParams.set("status", value);
+    } else {
+      updatedParams.delete("status");
+    }
+    setSearchParams(updatedParams);
+  };
 
   const tagOptions =
     Array.isArray(tags) &&
@@ -73,6 +84,22 @@ function LeadView() {
     Array.isArray(leads) &&
     leads.reduce((acc, curr) => {
       if (curr.status === "Qualified") {
+        return acc + 1;
+      }
+      return acc;
+    }, 0);
+  const proposalSentLeads =
+    Array.isArray(leads) &&
+    leads.reduce((acc, curr) => {
+      if (curr.status === "Proposal Sent") {
+        return acc + 1;
+      }
+      return acc;
+    }, 0);
+  const ClosedLeads =
+    Array.isArray(leads) &&
+    leads.reduce((acc, curr) => {
+      if (curr.status === "Closed") {
         return acc + 1;
       }
       return acc;
@@ -120,41 +147,68 @@ function LeadView() {
   return (
     <div className="p-4">
       <div className="py-4">
-        {Array.isArray(leads) && leads.length > 0 ? (
-          <>
-            {" "}
-            <h2 className="mb-3">Lead Status</h2>
-            <div>
-              <div>
-                <p>
-                  <strong className="fs-5 me-2"> New:</strong>
-                  <span className=" text-body-secondary fs-5 ">
-                    {newLeads} {newLeads > 1 ? "Leads" : "Lead"}
-                  </span>
-                </p>
+        <>
+          <h2 className="mb-3">Lead Status</h2>
+          <div className="d-flex justify-content-between">
+            <p className="border border-info px-2 rounded p-1">
+              <span className="fs-5 fw-medium me-2"> New:</span>
+              <span className=" text-body-secondary fs-5 ">
+                {newLeads} {newLeads > 1 ? "Leads" : "Lead"}
+              </span>
+            </p>
 
-                <p>
-                  <strong className="fs-5 me-2"> Contracted:</strong>
-                  <span className=" text-body-secondary fs-5 ">
-                    {contractedLeads} {contractedLeads > 1 ? "Leads" : "Lead"}
-                  </span>
-                </p>
+            <p className="border border-info px-2 rounded p-1">
+              <span className="fs-5 fw-medium me-2"> Contracted:</span>
+              <span className=" text-body-secondary fs-5 ">
+                {contractedLeads} {contractedLeads > 1 ? "Leads" : "Lead"}
+              </span>
+            </p>
 
-                <p>
-                  <strong className="fs-5 me-2"> Qualified:</strong>
-                  <span className=" text-body-secondary fs-5 ">
-                    {qualifiedLeads} {qualifiedLeads > 1 ? "Leads" : "Lead"}
-                  </span>
-                </p>
-              </div>
-            </div>{" "}
-          </>
-        ) : (
-          "Loading..."
-        )}
+            <p className="border border-info px-2 rounded p-1">
+              <span className="fs-5 fw-medium me-2"> Qualified:</span>
+              <span className=" text-body-secondary fs-5 ">
+                {qualifiedLeads} {qualifiedLeads > 1 ? "Leads" : "Lead"}
+              </span>
+            </p>
+
+            <p className="border border-info px-2 rounded p-1">
+              <span className="fs-5 fw-medium me-2"> Proposal Sent:</span>
+              <span className=" text-body-secondary fs-5 ">
+                {proposalSentLeads} {proposalSentLeads > 1 ? "Leads" : "Lead"}
+              </span>
+            </p>
+
+            <p className="border border-info px-2 rounded p-1">
+              <span className="fs-5 fw-medium me-2"> Closed:</span>
+              <span className=" text-body-secondary fs-5 ">
+                {ClosedLeads} {ClosedLeads > 1 ? "Leads" : "Lead"}
+              </span>
+            </p>
+          </div>
+        </>
       </div>
 
       <div>
+        <div className="pb-3 d-flex flex-wrap justify-content-between">
+          <div>
+            <h2>Leads</h2>
+          </div>
+          <div>
+            <select
+              value={leadSearchStatus}
+              onChange={(e) => handleFilterChnage(e.target.value)}
+              className="border-info-subtle rounded text-info p-1"
+            >
+              <option value="">All Leads</option>
+              <option value="New">New</option>
+              <option value="Contracted">Contracted</option>
+              <option value="Qualified">Qualified</option>
+              <option value="Proposal Sent">Proposal Sent</option>
+              <option value="Closed">Closed</option>
+            </select>
+          </div>
+        </div>
+
         {status === "loading" ? (
           <div className="d-flex justify-content-center align-items-center vh-50">
             <div className="spinner-border text-info" role="status">
@@ -166,20 +220,6 @@ function LeadView() {
 
         {Array.isArray(leads) && leads?.length > 0 ? (
           <div>
-            <div className="pb-3 d-flex flex-wrap justify-content-between">
-              <div>
-                <h2>Leads</h2>
-              </div>
-              <div>
-                <button className="btn btn-outline-info ms-2">New Lead</button>
-                <button className="btn btn-outline-info ms-2">
-                  Contracted Lead
-                </button>
-                <button className="btn btn-outline-info ms-2">
-                  Qualfied Lead
-                </button>
-              </div>
-            </div>
             <div className="row">
               {Array.isArray(leads) &&
                 leads?.map((lead, index) => (
@@ -208,7 +248,9 @@ function LeadView() {
             </div>
           </div>
         ) : (
-          "Loading..."
+          !status === "loading" && (
+            <p className="fs-5 fw-medium">No Lead Found</p>
+          )
         )}
 
         <button

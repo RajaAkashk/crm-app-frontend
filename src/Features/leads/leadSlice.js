@@ -57,16 +57,20 @@ export const fetchLeadById = createAsyncThunk("get/lead", async (leadId) => {
 
 export const updateLead = createAsyncThunk(
   "put/lead",
-  async ({ leadId, updatedData }) => {
+  async ({ id, updatedData }, { rejectWithValue }) => {
+    console.log("Updating Lead with ID:", id);
     try {
       const response = await axios.put(
-        `https://backend-mp-2.vercel.app/api/leads/${leadId}`,
+        `https://backend-mp-2.vercel.app/api/leads/${id}`,
         updatedData
       );
+      console.log("Updated Lead:", response.data.updatedLead);
       return response.data.updatedLead;
     } catch (error) {
-      console.error(error);
-      return error.response?.data?.message || "Failed to update lead";
+      console.error("Update Lead Error:", error);
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to update lead"
+      );
     }
   }
 );
@@ -141,9 +145,12 @@ export const leadSlice = createSlice({
     });
     builder.addCase(updateLead.fulfilled, (state, action) => {
       state.status = "success";
-      state.leads = state.leads.map((lead) =>
-        lead._id === action.payload._id ? action.payload : lead
-      );
+      console.log("updateLead action.payload", action.payload);
+      if (state.leads.length > 0) {
+        state.leads = state.leads.map((lead) =>
+          lead._id === action.payload._id ? action.payload : lead
+        );
+      }
     });
     builder.addCase(updateLead.rejected, (state, action) => {
       state.status = "error";

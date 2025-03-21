@@ -6,17 +6,21 @@ import { useDispatch, useSelector } from "react-redux";
 
 function EditLeadPage() {
   const { id } = useParams();
-  
+  console.log("EditLeadPage ID:-", id);
+
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const { leads, status, error } = useSelector((state) => state.leads);
 
   const [formData, setFormData] = useState({
     name: "",
+    salesAgent: "",
     source: "",
     status: "",
-    priority: "",
+    tags: "",
     timeToClose: "",
+    priority: "",
   });
 
   useEffect(() => {
@@ -24,13 +28,15 @@ function EditLeadPage() {
   }, [dispatch, id]);
 
   useEffect(() => {
-    if (leads) {
+    if (leads && Object.keys(leads).length) {
       setFormData({
         name: leads.name || "",
         source: leads.source || "",
+        salesAgent: leads.salesAgent || "",
         status: leads.status || "",
-        priority: leads.priority || "",
+        tags: leads.tags || "",
         timeToClose: leads.timeToClose || "",
+        priority: leads.priority || "",
       });
     }
   }, [leads]);
@@ -41,9 +47,12 @@ function EditLeadPage() {
   };
 
   // Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    dispatch(updateLead({ id, updatedLead: formData }));
+    console.log("handleSubmit", formData);
+    console.log("Submitting with ID:", id);
+    await dispatch(updateLead({ id, updatedLead: formData }));
+    // navigate("/");
   };
 
   return (
@@ -75,6 +84,18 @@ function EditLeadPage() {
                     className="form-control"
                     name="name"
                     value={formData.name}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+
+                <div className="mb-3">
+                  <label className="form-label">Sales Agent</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    name="name"
+                    value={formData.salesAgent.name}
                     onChange={handleChange}
                     required
                   />
