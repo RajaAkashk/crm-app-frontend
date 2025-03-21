@@ -7,12 +7,16 @@ import {
   deleteSalesAgent,
 } from "../Features/salesAgents/salesAgentSlice";
 import { Link } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 
 function SettingPage() {
   const dispatch = useDispatch();
 
+  const [searchParams] = useSearchParams();
   useEffect(() => {
-    dispatch(fetchLeads());
+    const salesAgent = searchParams.get("salesAgent");
+    const status = searchParams.get("status");
+    dispatch(fetchLeads({ salesAgent, status }));
     dispatch(fetchSalesAgents());
   }, [dispatch]);
 
@@ -52,19 +56,15 @@ function SettingPage() {
               <p>{error}</p>
             ) : (
               <div className="p-4">
-                <div>
+                <div className="row">
                   <h2 className="mb-3">Leads</h2>
-                  {Array.isArray(leads.leads) &&
-                    leads?.leads?.map((lead, index) => (
+                  {Array.isArray(leads) &&
+                    leads?.map((lead, index) => (
                       <div
                         key={lead._id ? lead._id : `lead-${index}`}
                         className="col-md-3"
                       >
-                        <Link
-                          to={`lead/${lead._id}`}
-                          className="card"
-                          style={{ textDecoration: "none" }}
-                        >
+                        <div className="card mb-3">
                           <div className="card-body">
                             <span className="badge mb-2 bg-info">
                               {lead.status}
@@ -90,7 +90,7 @@ function SettingPage() {
                               </button>
                             </div>
                           </div>
-                        </Link>
+                        </div>
                       </div>
                     ))}
                 </div>
