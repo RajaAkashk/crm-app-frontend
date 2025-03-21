@@ -3,15 +3,18 @@ import Sidenav from "../Components/Sidenav";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { fetchLeadById, updateLead } from "../Features/leads/leadSlice";
 import { useDispatch, useSelector } from "react-redux";
+import { fetchSalesAgents } from "../Features/salesAgents/salesAgentSlice";
+import Select from "react-select";
 
 function EditLeadPage() {
   const { id } = useParams();
-  console.log("EditLeadPage ID:-", id);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const { leads, status, error } = useSelector((state) => state.leads);
+  const { salesAgents } = useSelector((state) => state.salesAgents);
+  console.log("EditLeadPage salesAgents", salesAgents);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -25,6 +28,7 @@ function EditLeadPage() {
 
   useEffect(() => {
     dispatch(fetchLeadById(id));
+    dispatch(fetchSalesAgents());
   }, [dispatch, id]);
 
   useEffect(() => {
@@ -32,7 +36,7 @@ function EditLeadPage() {
       setFormData({
         name: leads.name || "",
         source: leads.source || "",
-        salesAgent: leads.salesAgent || "",
+        salesAgent: leads.salesAgent._id || "",
         status: leads.status || "",
         tags: leads.tags || "",
         timeToClose: leads.timeToClose || "",
@@ -44,17 +48,23 @@ function EditLeadPage() {
   // Handle input change
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    console.log("setFormData", formData);
   };
 
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("handleSubmit", formData);
+    console.log("handleSubmit from editLeadPage:", formData);
     console.log("Submitting with ID:", id);
-    await dispatch(updateLead({ id, updatedLead: formData }));
-    // navigate("/");
+    dispatch(updateLead({ id, formData }));
   };
 
+  const options =
+    Array.isArray(salesAgents) &&
+    salesAgents.map((agent) => ({ value: agent._id, label: agent.name }));
+
+  console.log("setFormData", formData);
+  console.log("options", options);
   return (
     <div className="" style={{ background: "#cff4fc" }}>
       <div className="container-fluid">
@@ -91,13 +101,20 @@ function EditLeadPage() {
 
                 <div className="mb-3">
                   <label className="form-label">Sales Agent</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    name="name"
-                    value={formData.salesAgent.name}
-                    onChange={handleChange}
-                    required
+
+                  <Select
+                    value={
+                      options.find(
+                        (option) => option.value === formData.salesAgent
+                      ) || null
+                    }
+                    options={options}
+                    onChange={(selectedOption) =>
+                      setFormData({
+                        ...formData,
+                        salesAgent: selectedOption.value,
+                      })
+                    }
                   />
                 </div>
 

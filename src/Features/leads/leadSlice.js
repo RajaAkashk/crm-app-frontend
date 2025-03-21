@@ -57,12 +57,12 @@ export const fetchLeadById = createAsyncThunk("get/lead", async (leadId) => {
 
 export const updateLead = createAsyncThunk(
   "put/lead",
-  async ({ id, updatedData }, { rejectWithValue }) => {
+  async ({ id, formData }, { rejectWithValue }) => {
     console.log("Updating Lead with ID:", id);
     try {
       const response = await axios.put(
         `https://backend-mp-2.vercel.app/api/leads/${id}`,
-        updatedData
+        formData
       );
       console.log("Updated Lead:", response.data.updatedLead);
       return response.data.updatedLead;
