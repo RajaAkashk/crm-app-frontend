@@ -27,22 +27,47 @@ function LeadView() {
   // for the initial fetching
   const [searchParams, setSearchParams] = useSearchParams();
   const leadSearchStatus = searchParams.get("status") || "";
-  const salesAgent = searchParams.get("salesAgent") || "";
-
+  const searchSalesAgent = searchParams.get("salesAgent") || "";
+  console.log("searchSalesAgent", searchSalesAgent);
   useEffect(() => {
-    dispatch(fetchLeads({ salesAgent, status: leadSearchStatus }));
+    dispatch(
+      fetchLeads({ salesAgent: searchSalesAgent, status: leadSearchStatus })
+    );
     dispatch(fetchSalesAgents());
     dispatch(fetchTags());
-  }, [dispatch, salesAgent, leadSearchStatus]);
+  }, [dispatch, searchSalesAgent, leadSearchStatus]);
 
   // for the status based filtering
-  const handleFilterChnage = (value) => {
+  // const handleStatusFilterChange = (value) => {
+  //   const updatedParams = new URLSearchParams(searchParams);
+  //   if (value) {
+  //     updatedParams.set("status", value);
+  //   } else {
+  //     updatedParams.delete("status");
+  //   }
+  //   setSearchParams(updatedParams);
+  // };
+
+  // for the sales agent-based filtering
+  // const handleSalesAgentFilterChange = (value) => {
+  //   const updatedParams = new URLSearchParams(searchParams);
+  //   if (value) {
+  //     updatedParams.set("salesAgent", value);
+  //   } else {
+  //     updatedParams.delete("salesAgent");
+  //   }
+  //   setSearchParams(updatedParams);
+  // };
+
+  const handleFilterChange = (filter, value) => {
     const updatedParams = new URLSearchParams(searchParams);
+
     if (value) {
-      updatedParams.set("status", value);
+      updatedParams.set(filter, value);
     } else {
-      updatedParams.delete("status");
+      updatedParams.delete(filter);
     }
+
     setSearchParams(updatedParams);
   };
 
@@ -194,17 +219,23 @@ function LeadView() {
           <div className="d-flex">
             <div className="me-2">
               <select
-                value={leadSearchStatus}
-                onChange={(e) => handleFilterChnage(e.target.value)}
+                value={searchSalesAgent}
+                onChange={(e) =>
+                  handleFilterChange("salesAgent", e.target.value)
+                }
                 className="border-info-subtle rounded text-info p-1"
               >
                 <option value="">All Sales Agents</option>
+                {Array.isArray(salesAgents) &&
+                  salesAgents.map((agent) => (
+                    <option value={agent._id}>{agent.name}</option>
+                  ))}
               </select>
             </div>
             <div>
               <select
                 value={leadSearchStatus}
-                onChange={(e) => handleFilterChnage(e.target.value)}
+                onChange={(e) => handleFilterChange("status", e.target.value)}
                 className="border-info-subtle rounded text-info p-1"
               >
                 <option value="">All Leads</option>
