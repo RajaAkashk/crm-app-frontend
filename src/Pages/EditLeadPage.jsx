@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Sidenav from "../Components/Sidenav";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { fetchLeadById, updateLead } from "../Features/leads/leadSlice";
+import { addNewTag, fetchTags } from "../Features/tags/tagSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchSalesAgents } from "../Features/salesAgents/salesAgentSlice";
 import Select from "react-select";
@@ -15,6 +16,11 @@ function EditLeadPage() {
   const { leads, status, error } = useSelector((state) => state.leads);
   const { salesAgents } = useSelector((state) => state.salesAgents);
   console.log("EditLeadPage salesAgents", salesAgents);
+  const { tags } = useSelector((state) => state.tags);
+  console.log("EditLeadPage fetch Tags:- ", tags);
+
+  const [tagFormDisplay, setTagFormDisplay] = useState(false);
+  const [tagName, setTagName] = useState("");
 
   const [formData, setFormData] = useState({
     name: "",
@@ -29,6 +35,7 @@ function EditLeadPage() {
   useEffect(() => {
     dispatch(fetchLeadById(id));
     dispatch(fetchSalesAgents());
+    dispatch(fetchTags());
   }, [dispatch, id]);
 
   useEffect(() => {
@@ -65,6 +72,17 @@ function EditLeadPage() {
 
   console.log("setFormData", formData);
   console.log("options", options);
+
+  // Handle Add Tag
+  const handleNewTagSubmit = async (e) => {
+    e.preventDefault();
+    const newTag = { name: tagName };
+    await dispatch(addNewTag(newTag));
+    console.log("newTag :- ", newTag);
+    setTagFormDisplay(false);
+    setTagName("");
+  };
+  const tagsOptions = Array.isArray();
   return (
     <div className="" style={{ background: "#cff4fc" }}>
       <div className="container-fluid">
@@ -177,7 +195,47 @@ function EditLeadPage() {
                 <button type="submit" className="btn btn-outline-info">
                   Update Lead
                 </button>
+                <button
+                  onClick={() => setTagFormDisplay(true)}
+                  type="button"
+                  className="float-end btn btn-outline-info"
+                >
+                  <i class="bi bi-plus-square me-2"></i>Add Tag
+                </button>
               </form>
+            )}
+            {tagFormDisplay && (
+              <div className="overlay">
+                <div className="form-container">
+                  <form onSubmit={handleNewTagSubmit}>
+                    <h2 className="text-center text-info mb-3">Add New Tag</h2>
+                    <label className="form-label fs-5" htmlFor="tagName">
+                      Enter Tag Name:
+                    </label>
+                    <input
+                      className="form-control"
+                      type="text"
+                      onChange={(e) => setTagName(e.target.value)}
+                      id="tagName"
+                    />
+                    <div className="d-flex justify-content-between pt-4">
+                      <button className="btn btn-outline-info" type="submit">
+                        Submit
+                      </button>
+                      <button
+                        className="btn btn-secondary"
+                        type="button"
+                        onClick={() => {
+                          setTagFormDisplay(false);
+                          setTagName("");
+                        }}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
             )}
           </div>
         </div>

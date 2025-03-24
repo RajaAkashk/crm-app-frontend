@@ -35,7 +35,7 @@ function LeadView() {
     );
     dispatch(fetchSalesAgents());
     dispatch(fetchTags());
-  }, [dispatch, searchSalesAgent, leadSearchStatus]);
+  }, [dispatch, addNewLead, searchSalesAgent, leadSearchStatus]);
 
   // for the status based filtering
   // const handleStatusFilterChange = (value) => {
