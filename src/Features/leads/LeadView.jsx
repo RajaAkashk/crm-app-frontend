@@ -268,18 +268,18 @@ function LeadView() {
                     className="col-md-3"
                   >
                     <Link
-                      to={`lead/${lead._id}`}
+                      to={`lead/${lead?._id}`}
                       className="card mb-3"
                       style={{ textDecoration: "none" }}
                     >
                       <div className="card-body">
                         <span className="badge mb-2 bg-info">
                           {" "}
-                          {lead.status}
+                          {lead?.status}
                         </span>
                         <h5 className="card-title">{lead.name}</h5>
                         <h6 className="card-subtitle text-body-secondary">
-                          Sales Agent: {lead.salesAgent.name}
+                          Sales Agent: {lead?.salesAgent?.name}
                         </h6>
                       </div>
                     </Link>

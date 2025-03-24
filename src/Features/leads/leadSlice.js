@@ -123,7 +123,7 @@ export const leadSlice = createSlice({
       console.log("fetchLeads action.payload", action.payload);
       state.leads = action.payload;
     });
-    builder.addCase(fetchLeads.rejected, (state) => {
+    builder.addCase(fetchLeads.rejected, (state, action) => {
       state.status = "error";
       state.error = action.error.message;
     });
@@ -135,7 +135,7 @@ export const leadSlice = createSlice({
       state.status = "success";
       state.leads = action.payload;
     });
-    builder.addCase(fetchLeadById.rejected, (state) => {
+    builder.addCase(fetchLeadById.rejected, (state, action) => {
       state.status = "error";
       state.error = action.error.message;
     });
