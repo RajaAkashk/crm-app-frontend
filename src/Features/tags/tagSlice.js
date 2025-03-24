@@ -7,12 +7,22 @@ export const fetchTags = createAsyncThunk("get/tags", async () => {
       "https://backend-mp-2.vercel.app/api/tags"
     );
 
-    if (!response.data) {
-      console.log("Not getting response.");
-      return "No response from tags api";
-    }
     console.log("response data form fetch tags", response.data.allTags);
     return response.data.allTags;
+  } catch (error) {
+    console.error("Error in getting tags", error);
+    return "Error in fetching tags";
+  }
+});
+
+export const addNewTag = createAsyncThunk("post/newTag", async (newtag) => {
+  try {
+    const response = await axios.post(
+      "https://backend-mp-2.vercel.app/api/tags",
+      newtag
+    );
+    console.log("response data form addNewTag", response.data);
+    return response.data.newTag;
   } catch (error) {
     console.error("Error in getting tags", error);
     return "Error in fetching tags";
@@ -37,6 +47,18 @@ export const tagSlice = createSlice({
       state.tags = action.payload;
     });
     builder.addCase(fetchTags.rejected, (state, action) => {
+      state.status = "error";
+      state.error = action.error.message;
+    });
+    // add New Tag
+    builder.addCase(addNewTag.pending, (state) => {
+      state.status = "loading";
+    });
+    builder.addCase(addNewTag.fulfilled, (state, action) => {
+      state.status = "success";
+      state.tags = [...state.tags, action.payload];
+    });
+    builder.addCase(addNewTag.rejected, (state, action) => {
       state.status = "error";
       state.error = action.error.message;
     });
