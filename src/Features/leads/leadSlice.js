@@ -93,18 +93,23 @@ export const deleteLead = createAsyncThunk("delete/lead", async (leadId) => {
   }
 });
 
-export const addNewLead = createAsyncThunk("post/newLead", async (newLead) => {
-  try {
-    const response = await axios.post(
-      "https://backend-mp-2.vercel.app/api/leads",
-      newLead
-    );
-    console.log("addNewLead :-", response.data.savedLead);
-    return response.data.savedLead;
-  } catch (error) {
-    return error.response?.data?.message || "Failed to Add lead";
+export const addNewLead = createAsyncThunk(
+  "post/newLead",
+  async (newLead, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(
+        "https://backend-mp-2.vercel.app/api/leads",
+        newLead
+      );
+      console.log("addNewLead :-", response.data);
+      return response.data.populatedLead;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to Add lead"
+      );
+    }
   }
-});
+);
 
 export const leadSlice = createSlice({
   name: "leads",
