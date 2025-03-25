@@ -9,12 +9,14 @@ import LeadDetailsPage from "./Pages/LeadDetailsPage";
 import EditLeadPage from "./Pages/EditLeadPage";
 import SettingPage from "./Pages/SettingPage";
 import ReportPage from "./Pages/ReportPage";
+import LoginPage from "./Pages/LoginPage";
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<HomePage />}></Route>
+        <Route path="/" element={<LoginPage />}></Route>
+        <Route path="/dashboard" element={<HomePage />}></Route>
         <Route path="/salesAgent" element={<SalesAgentPage />}></Route>
         <Route path="/lead/:id" element={<LeadDetailsPage />}></Route>
         <Route path="/edit/lead/:id" element={<EditLeadPage />}></Route>

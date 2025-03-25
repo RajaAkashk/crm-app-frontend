@@ -55,12 +55,11 @@ function ReportPage() {
       {
         label: "Leads Closed",
         data: Array.isArray(leads) && leads?.map((lead) => lead.timeToClose),
-        backgroundColor: "rgba(14, 230, 230, 0.6)",
+        backgroundColor: "#CBAAF7",
       },
     ],
   };
 
-  // 2. Total Leads in Pipeline (by Status)
   const leadStatusCounts =
     Array.isArray(leads) &&
     leads?.reduce((acc, lead) => {
@@ -68,52 +67,33 @@ function ReportPage() {
       return acc;
     }, {});
 
-  const pipelineData = {
-    labels: Object.keys(leadStatusCounts),
-    datasets: [
-      {
-        label: "Total Leads",
-        data: Object.values(leadStatusCounts),
-        backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0"],
-      },
-    ],
-  };
-
-  // 3. Leads by Sales Agent
+  // 2. Leads by Sales Agent
   const leadsByAgent =
     Array.isArray(leads) &&
-    leads
-      ?.filter((lead) => lead.status === "Closed")
-      .reduce((acc, lead) => {
-        acc[lead.salesAgent.name] = (acc[lead.salesAgent.name] || 0) + 1;
-        return acc;
-      }, {});
+    leads.reduce((acc, lead) => {
+      acc[lead.salesAgent.name] = (acc[lead.salesAgent.name] || 0) + 1;
+      return acc;
+    }, {});
 
   const salesAgentData = {
     labels: Object.keys(leadsByAgent),
     datasets: [
       {
-        label: "Closed Leads by Agent",
+        label: "Leads by Agent",
         data: Object.values(leadsByAgent),
-        backgroundColor: "#42A5F5",
+        backgroundColor: ["#eea45d", "#1078af", "#b3e3e7"],
       },
     ],
   };
 
-  // 4. Lead Status Distribution
+  // 3. Lead Status Distribution
   const statusDistributionData = {
     labels: Object.keys(leadStatusCounts),
     datasets: [
       {
-        label: "Lead Status",
+        label: "Lead",
         data: Object.values(leadStatusCounts),
-        backgroundColor: [
-          "#FF6384",
-          "#42A5F5",
-          "#FFCE56",
-          "#33ffc1",
-          "#33bbff",
-        ],
+        backgroundColor: ["#FF6384", "#42A5F5", "#FFCE56", "#33ffc1", "#ccc"],
       },
     ],
   };
@@ -147,23 +127,20 @@ function ReportPage() {
                   </div>
 
                   <div className="col-md-6">
-                    <h3>Total Leads in Pipeline</h3>
-                    <div className="p-3">
-                      <Bar data={pipelineData} />
-                    </div>
-                  </div>
-
-                  <div className="col-md-6">
                     <h3>Leads by Sales Agent</h3>
                     <div className="p-3">
                       <Bar data={salesAgentData} />
                     </div>
                   </div>
+                </div>
 
-                  <div className="col-md-6">
-                    <h3>Lead Status Distribution</h3>
-                    <div className="p-3">
-                      <Pie data={statusDistributionData} />
+                <div className="col-md-12 d-flex text-center justify-content-center align-items-center">
+                  <div className="row w-100">
+                    <div className="col-md-6 mx-auto">
+                      <h3>Lead Status Distribution</h3>
+                      <div className="p-3">
+                        <Pie data={statusDistributionData} />
+                      </div>
                     </div>
                   </div>
                 </div>

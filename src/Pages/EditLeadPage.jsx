@@ -14,6 +14,7 @@ function EditLeadPage() {
   const navigate = useNavigate();
 
   const { leads, status, error } = useSelector((state) => state.leads);
+  console.log("EditLeadPage leads", leads);
   const { salesAgents } = useSelector((state) => state.salesAgents);
   console.log("EditLeadPage salesAgents", salesAgents);
   const { tags } = useSelector((state) => state.tags);
@@ -45,7 +46,7 @@ function EditLeadPage() {
         source: leads.source || "",
         salesAgent: leads.salesAgent._id || "",
         status: leads.status || "",
-        tags: leads.tags || "",
+        tags: leads.tags.map((tag) => tag._id) || "",
         timeToClose: leads.timeToClose || "",
         priority: leads.priority || "",
       });
@@ -82,7 +83,10 @@ function EditLeadPage() {
     setTagFormDisplay(false);
     setTagName("");
   };
-  const tagsOptions = Array.isArray();
+  const tagsOptions =
+    Array.isArray(tags) &&
+    tags?.map((tag) => ({ value: tag._id, label: tag.name }));
+
   return (
     <div className="" style={{ background: "#cff4fc" }}>
       <div className="container-fluid">
@@ -131,6 +135,26 @@ function EditLeadPage() {
                       setFormData({
                         ...formData,
                         salesAgent: selectedOption.value,
+                      })
+                    }
+                  />
+                </div>
+
+                <div className="mb-3">
+                  <label className="form-label">Tags</label>
+
+                  <Select
+                    value={
+                      tagsOptions.filter((option) =>
+                        formData.tags.includes(option.value)
+                      ) || null
+                    }
+                    isMulti
+                    options={tagsOptions}
+                    onChange={(selectedOptions) =>
+                      setFormData({
+                        ...formData,
+                        tags: selectedOptions.map((option) => option.value),
                       })
                     }
                   />

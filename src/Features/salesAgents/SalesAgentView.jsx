@@ -43,8 +43,6 @@ const SalesAgentView = () => {
             <span className="visually-hidden">Loading...</span>
           </div>
         </div>
-      ) : error ? (
-        <p>{error}</p>
       ) : (
         <div className="d-flex flex-wrap">
           {Array.isArray(salesAgents) &&
