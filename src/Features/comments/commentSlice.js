@@ -26,7 +26,7 @@ export const addNewComment = createAsyncThunk(
       if (!token) return rejectWithValue("No auth token found");
 
       console.log("Sending request with:", newComment);
-      
+
       const response = await axios.post(
         `https://backend-mp-2.vercel.app/api/comments/leads/${id}/comments`,
         newComment,
@@ -38,7 +38,7 @@ export const addNewComment = createAsyncThunk(
         }
       );
       console.log("addNewComment response.data", response.data);
-      return response.data;
+      return response.data.savedComment;
     } catch (error) {
       console.log("Error in adding new comment", error);
       return rejectWithValue(error || "Failed to add comment");

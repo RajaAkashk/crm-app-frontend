@@ -41,7 +41,7 @@ function LeadDetailsPage() {
     const resultAction = await dispatch(addNewComment({ newComment, id }));
     console.log("resultAction: ", resultAction);
 
-    if (resultAction.payload?.message) {
+    if (resultAction.payload) {
       setDisplay(false);
       setComment("");
     } else {

@@ -7,6 +7,7 @@ import {
   deleteSalesAgent,
 } from "../Features/salesAgents/salesAgentSlice";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useSearchParams } from "react-router-dom";
 
 function SettingPage() {
@@ -35,6 +36,13 @@ function SettingPage() {
 
   const handleDeleteSalesAgent = (id) => {
     dispatch(deleteSalesAgent(id));
+  };
+
+  const navigate = useNavigate();
+  const handleLogOut = () => {
+    localStorage.removeItem("user");
+    localStorage.removeItem("authToken");
+    navigate("/");
   };
 
   return (
@@ -77,7 +85,7 @@ function SettingPage() {
                             </div>
                             <div className="mt-4 d-flex justify-content-between">
                               <Link
-                                to={`/lead/${lead._id}`}
+                                to={`/edit/lead/${lead._id}`}
                                 className="btn btn-outline-info"
                               >
                                 <i class="bi bi-pencil-square"></i>
@@ -132,6 +140,14 @@ function SettingPage() {
                 </div>
               </div>
             )}
+            <div>
+              <button
+                onClick={handleLogOut}
+                className="mb-5 btn text-white btn-info float-end"
+              >
+                <i class="bi bi-box-arrow-left me-2"></i>Log Out
+              </button>
+            </div>
           </div>
         </div>
       </div>

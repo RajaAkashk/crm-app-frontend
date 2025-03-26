@@ -8,21 +8,14 @@ function Sidenav() {
 
       <nav className="d-flex flex-column">
         <NavLink
-          to="/"
+          to="/dashboard"
           className={({ isActive }) =>
             `text-black fs-5 fw-medium mb-3  ${isActive ? "active-link" : ""}`
           }
         >
           Leads
         </NavLink>
-        {/* <NavLink
-          to="/sales"
-          className={({ isActive }) =>
-            `text-black fs-5 fw-medium  mb-3 ${isActive ? "active-link" : ""}`
-          }
-        >
-          Sales
-        </NavLink> */}
+
         <NavLink
           to="/salesAgent"
           className={({ isActive }) =>
