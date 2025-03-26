@@ -10,18 +10,37 @@ import EditLeadPage from "./Pages/EditLeadPage";
 import SettingPage from "./Pages/SettingPage";
 import ReportPage from "./Pages/ReportPage";
 import LoginPage from "./Pages/LoginPage";
+import AuthRoute from "./Components/AuthRoute";
 
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<LoginPage />}></Route>
-        <Route path="/dashboard" element={<HomePage />}></Route>
-        <Route path="/salesAgent" element={<SalesAgentPage />}></Route>
-        <Route path="/lead/:id" element={<LeadDetailsPage />}></Route>
-        <Route path="/edit/lead/:id" element={<EditLeadPage />}></Route>
-        <Route path="/report" element={<ReportPage />}></Route>
-        <Route path="/settings" element={<SettingPage />}></Route>
+        <Route
+          path="/dashboard"
+          element={<AuthRoute element={<HomePage />} />}
+        ></Route>
+        <Route
+          path="/salesAgent"
+          element={<AuthRoute element={<SalesAgentPage />} />}
+        ></Route>
+        <Route
+          path="/dashboard/lead/:id"
+          element={<AuthRoute element={<LeadDetailsPage />} />}
+        ></Route>
+        <Route
+          path="/edit/lead/:id"
+          element={<AuthRoute element={<EditLeadPage />} />}
+        ></Route>
+        <Route
+          path="/report"
+          element={<AuthRoute element={<ReportPage />} />}
+        ></Route>
+        <Route
+          path="/settings"
+          element={<AuthRoute element={<SettingPage />} />}
+        ></Route>
       </Routes>
     </Router>
   );
