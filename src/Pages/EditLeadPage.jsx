@@ -44,9 +44,11 @@ function EditLeadPage() {
       setFormData({
         name: leads.name || "",
         source: leads.source || "",
-        salesAgent: leads.salesAgent._id || "",
+        salesAgent: leads.salesAgent?._id || "",
         status: leads.status || "",
-        tags: leads.tags.map((tag) => tag._id) || "",
+        tags:
+          (Array.isArray(leads.tags) && leads.tags?.map((tag) => tag._id)) ||
+          "",
         timeToClose: leads.timeToClose || "",
         priority: leads.priority || "",
       });
