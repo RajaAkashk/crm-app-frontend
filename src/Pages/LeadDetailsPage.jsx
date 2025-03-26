@@ -23,25 +23,25 @@ function LeadDetailsPage() {
     error: commentError,
   } = useSelector((state) => state.comments);
 
-  // console.log("LeadDetailsPage comments- ", comments);
-  // console.log("LeadDetailsPage - ", leads);
+  const getSalesAgentInfo = JSON.parse(localStorage.getItem("user"));
+  console.log("getSalesAgentInfo:- ", getSalesAgentInfo);
 
   useEffect(() => {
     dispatch(fetchLeadById(id));
     dispatch(fetchComments(id));
   }, [dispatch, id]);
 
-  const AddNewSalesAgent = async (e) => {
+  const HandleAddNewComment = async (e) => {
     e.preventDefault();
     const newComment = {
-      lead: id,
-      author: "",
-      comment: comment,
+      commentText: comment,
+      author: getSalesAgentInfo?.id,
     };
-    const resultAction = await dispatch(addNewComment(newComment));
+    console.log("newComment: ", newComment);
+    const resultAction = await dispatch(addNewComment({ newComment, id }));
     console.log("resultAction: ", resultAction);
 
-    if (resultAction) {
+    if (resultAction.payload?.message) {
       setDisplay(false);
       setComment("");
     } else {
@@ -60,7 +60,10 @@ function LeadDetailsPage() {
             <Sidenav />
           </div>
           <div className="col-md-10 p-4" style={{ background: "#fff" }}>
-            <Link to="/" className="btn btn-outline-info fs-5 fw-medium mb-4">
+            <Link
+              to="/dashboard"
+              className="btn btn-outline-info fs-5 fw-medium mb-4"
+            >
               Back to Dashboard
             </Link>
             <Link
@@ -121,19 +124,17 @@ function LeadDetailsPage() {
               ) : (
                 <div>
                   <ul className="list-group">
-                    {comments.map((comment) => (
-                      <li key={comment._id} className="list-group-item">
-                        <p>{comment.commentText}</p>
-                        <p>
-                          <i class="bi bi-person-circle fs-4 me-2"></i>
-                          {comment.author?.name || "Unknown"}
-                        </p>
-                        <p>
-                          {/* <strong>Created At: </strong> */}
-                          {new Date(comment.createdAt).toLocaleString()}
-                        </p>
-                      </li>
-                    ))}
+                    {Array.isArray(comments) &&
+                      comments?.map((comment) => (
+                        <li key={comment._id} className="list-group-item">
+                          <p>{comment?.commentText}</p>
+                          <p>
+                            <i class="bi bi-person-circle fs-4 me-2"></i>
+                            {comment.author?.name || "Unknown"}
+                          </p>
+                          <p>{new Date(comment.createdAt).toLocaleString()}</p>
+                        </li>
+                      ))}
                   </ul>
                 </div>
               )}
@@ -148,9 +149,9 @@ function LeadDetailsPage() {
             {display && (
               <div className="overlay">
                 <div className="form-container">
-                  <form onSubmit={AddNewSalesAgent}>
+                  <form onSubmit={HandleAddNewComment}>
                     <div className="mb-3">
-                      <label htmlFor="comment" className="form-label">
+                      <label htmlFor="comment" className="form-label fs-5">
                         Add a Comment
                       </label>
                       <input

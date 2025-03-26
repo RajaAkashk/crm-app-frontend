@@ -96,7 +96,10 @@ function EditLeadPage() {
             <Sidenav />
           </div>
           <div className="col-md-10 p-4" style={{ background: "#fff" }}>
-            <Link to="/" className="btn btn-outline-info fs-5 fw-medium mb-4">
+            <Link
+              to="/dashboard"
+              className="btn btn-outline-info fs-5 fw-medium mb-4"
+            >
               Back to Dashboard
             </Link>
             {status === "loading" ? (
