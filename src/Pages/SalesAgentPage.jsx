@@ -1,6 +1,6 @@
 import React from "react";
 import Sidenav from "../Components/Sidenav";
-import SalesAgentView from "../Features/salesAgents/salesAgentView";
+import SalesAgentView from "../Features/salesAgents/SalesAgentView";
 
 function SalesAgentPage() {
   return (
